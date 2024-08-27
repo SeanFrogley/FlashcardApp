@@ -55,8 +55,8 @@ class MainActivity : ComponentActivity() {
                         composable("traditional_results_screen") {
                             TraditionalResultsScreen(navController = navController)
                         }
-                        composable("multiple_choice_flashcard_screen") {
-                            MultipleChoiceFlashcardScreen(navController = navController)
+                        composable("create_multiple_choice_flashcard_screen") {
+                            CreateMultipleChoiceFlashcardSetScreen(navController)
                         }
                         composable("create_traditional_flashcard_screen") {
                             CreateTraditionalFlashcardSetScreen(navController)

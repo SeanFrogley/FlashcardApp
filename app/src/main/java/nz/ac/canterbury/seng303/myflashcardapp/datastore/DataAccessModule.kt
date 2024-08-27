@@ -9,6 +9,8 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.FlowPreview
 import nz.ac.canterbury.seng303.myflashcardapp.models.TraditionalFlashcardSet
+import nz.ac.canterbury.seng303.myflashcardapp.screens.CreateMultipleChoiceFlashcardSetScreen
+import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.CreateMultipleChoiceFlashcardViewModel
 import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.CreateTraditionalFlashcardViewModel
 import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.ViewFlashcardSetsViewModel
 import org.koin.android.ext.koin.androidContext
@@ -31,11 +33,21 @@ val dataAccessModule = module {
     single { Gson() }
 
     viewModel {
-        CreateTraditionalFlashcardViewModel(
+        CreateTraditionalFlashcardViewModel (
             traditionalFlashcardStorage = get()
         )
     }
 
-    viewModel { ViewFlashcardSetsViewModel(get()) }
+    viewModel {
+        CreateMultipleChoiceFlashcardViewModel (
+            multipleChoiceFlashcardStorage = get()
+        )
+    }
+
+    viewModel {
+        ViewFlashcardSetsViewModel(
+            get()
+        )
+    }
 
 }

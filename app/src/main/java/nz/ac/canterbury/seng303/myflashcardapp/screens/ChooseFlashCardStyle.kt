@@ -74,7 +74,7 @@ fun ChooseFlashCardStyle(navController: NavController, modifier: Modifier = Modi
 
                     Button(
                         onClick = {
-                            navController.navigate("multiple_choice_flashcard_screen")
+                            navController.navigate("create_multiple_choice_flashcard_screen")
                         },
                         modifier = Modifier.fillMaxWidth(0.8f)
                     ) {
