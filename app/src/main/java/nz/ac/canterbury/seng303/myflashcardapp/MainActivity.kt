@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.myflashcardapp
 
+import CreateTraditionalFlashcardSetScreen
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity

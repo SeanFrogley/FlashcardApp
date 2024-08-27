@@ -1,11 +1,9 @@
-package nz.ac.canterbury.seng303.myflashcardapp.screens
-
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -16,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -34,6 +33,8 @@ fun CreateTraditionalFlashcardSetScreen(
     // Initialize the flashcards list with one empty flashcard
     var title by remember { mutableStateOf("") }
     var flashcards by remember { mutableStateOf(listOf(TraditionalFlashcard(0, "", ""))) }
+    var hasAttemptedSave by remember { mutableStateOf(false) } // Track save attempts
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -46,16 +47,26 @@ fun CreateTraditionalFlashcardSetScreen(
                 },
                 actions = {
                     IconButton(onClick = {
-                        viewModel.saveFlashcardSet(title, flashcards)
-                        Log.d("CreateFlashcardSet", "Flashcard set saved successfully: $title with ${flashcards.size} flashcards")
-                        navController.navigate("view_flashcards") {
-                            popUpTo("createFlashcardSet") { inclusive = true }
+                        hasAttemptedSave = true // User attempted to save
+                        when {
+                            title.isBlank() -> {
+                                Toast.makeText(context, "Title cannot be empty", Toast.LENGTH_SHORT).show()
+                            }
+                            flashcards.any { it.term.isBlank() || it.definition.isBlank() } -> {
+                                Toast.makeText(context, "All terms and definitions must be filled out", Toast.LENGTH_SHORT).show()
+                            }
+                            else -> {
+                                viewModel.saveFlashcardSet(title, flashcards)
+                                Log.d("CreateFlashcardSet", "Flashcard set saved successfully: $title with ${flashcards.size} flashcards")
+                                navController.navigate("view_flashcards") {
+                                    popUpTo("createFlashcardSet") { inclusive = true }
+                                }
+                            }
                         }
                     }) {
                         Icon(Icons.Default.Check, contentDescription = "Save")
                     }
                 }
-
             )
         },
         floatingActionButton = {
@@ -82,7 +93,8 @@ fun CreateTraditionalFlashcardSetScreen(
                 value = title,
                 onValueChange = { title = it },
                 label = { Text("Flashcard Set Title") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                isError = hasAttemptedSave && title.isBlank() // Show error only after save attempt
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -91,7 +103,11 @@ fun CreateTraditionalFlashcardSetScreen(
                 FlashcardInput(
                     flashcard = flashcard,
                     onRemove = {
-                        flashcards = flashcards.toMutableList().apply { removeAt(index) }
+                        if (flashcards.size > 1) {
+                            flashcards = flashcards.toMutableList().apply { removeAt(index) }
+                        } else {
+                            Toast.makeText(context, "You must have at least one flashcard", Toast.LENGTH_SHORT).show()
+                        }
                     },
                     onTermChange = { newTerm ->
                         flashcards = flashcards.toMutableList().apply {
@@ -102,7 +118,8 @@ fun CreateTraditionalFlashcardSetScreen(
                         flashcards = flashcards.toMutableList().apply {
                             this[index] = this[index].copy(definition = newDefinition)
                         }
-                    }
+                    },
+                    showError = hasAttemptedSave // Show error only after save attempt
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -115,7 +132,8 @@ fun FlashcardInput(
     flashcard: TraditionalFlashcard,
     onRemove: () -> Unit,
     onTermChange: (String) -> Unit,
-    onDefinitionChange: (String) -> Unit
+    onDefinitionChange: (String) -> Unit,
+    showError: Boolean
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -135,7 +153,8 @@ fun FlashcardInput(
                 label = { Text("Term") },
                 modifier = Modifier.fillMaxWidth(),
                 textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                isError = showError && flashcard.term.isBlank() // Show error only after save attempt
             )
             OutlinedTextField(
                 value = flashcard.definition,
@@ -143,7 +162,8 @@ fun FlashcardInput(
                 label = { Text("Definition") },
                 modifier = Modifier.fillMaxWidth(),
                 textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                isError = showError && flashcard.definition.isBlank() // Show error only after save attempt
             )
         }
     }
