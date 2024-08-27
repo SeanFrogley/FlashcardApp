@@ -25,7 +25,6 @@ class CreateTraditionalFlashcardViewModel(
     val selectedFlashcardSet: StateFlow<TraditionalFlashcardSet?> = _selectedFlashcardSet
 
     init {
-        // Automatically load flashcard sets when the ViewModel is initialized
         loadFlashcardSets()
     }
 
@@ -65,8 +64,7 @@ class CreateTraditionalFlashcardViewModel(
     }
 
     private fun getDefaultFlashcardSets(): List<TraditionalFlashcardSet> {
-        // Implement this method to return a list of default flashcard sets
-        return emptyList() // Placeholder
+        return emptyList()
     }
 }
 

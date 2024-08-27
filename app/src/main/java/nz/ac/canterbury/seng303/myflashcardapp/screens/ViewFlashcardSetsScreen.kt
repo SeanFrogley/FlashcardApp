@@ -47,7 +47,6 @@ fun ViewFlashcardSetsScreen(
                 .padding(16.dp)
                 .fillMaxSize()
         ) {
-            // Multiple Choice Flashcard Sets Section
             item {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -58,8 +57,7 @@ fun ViewFlashcardSetsScreen(
                         modifier = Modifier.weight(1f)
                     )
                     IconButton(onClick = {
-                        // Navigate to the create multiple choice flashcard set screen
-                        // navController.navigate("createMultipleChoiceFlashcardSet")
+                        // navigate to the create multiple choice flashcard set screen
                     }) {
                         Icon(Icons.Default.Add, contentDescription = "Add Multiple Choice Set")
                     }
@@ -75,7 +73,6 @@ fun ViewFlashcardSetsScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // Traditional Flashcard Sets Section
             item {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -93,11 +90,9 @@ fun ViewFlashcardSetsScreen(
                 }
             }
 
-            // Display flashcard sets in a list
             items(flashcardSets) { flashcardSet ->
                 FlashcardSetItem(flashcardSet) {
-                    // Navigate to a screen to view/edit the specific flashcard set
-                    // Example: navController.navigate("flashcardSetDetail/${flashcardSet.id}")
+                    // didnt have time to do
                 }
             }
         }
@@ -108,7 +103,7 @@ fun ViewFlashcardSetsScreen(
 @Composable
 fun FlashcardSetItem(
     flashcardSet: TraditionalFlashcardSet,
-    onPlayClick: () -> Unit // Callback for the play button
+    onPlayClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -119,7 +114,6 @@ fun FlashcardSetItem(
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(text = flashcardSet.title)
-            // Additional content can be added here
         }
         // Play Button
         IconButton(onClick = onPlayClick) {

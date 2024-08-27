@@ -22,8 +22,7 @@ class ViewFlashcardSetsViewModel(
 
     private fun loadFlashcardSets() = viewModelScope.launch {
         traditionalFlashcardStorage.getAll()
-            .catch { e -> // Handle the error
-                // Log the error or handle it appropriately
+            .catch { e -> //error
             }
             .collect { sets ->
                 _flashcardSets.emit(sets)

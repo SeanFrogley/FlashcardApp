@@ -22,7 +22,7 @@ class CreateMultipleChoiceFlashcardViewModel(
 
     fun getFlashcardSets() = viewModelScope.launch {
         multipleChoiceFlashcardStorage.getAll()
-            .catch { /* Handle the error appropriately */ }
+            .catch { /* error */ }
             .collectLatest { sets ->
                 _flashcardSets.value = sets
             }
@@ -36,27 +36,24 @@ class CreateMultipleChoiceFlashcardViewModel(
         )
 
         multipleChoiceFlashcardStorage.insert(flashcardSet)
-            .catch { /* Handle the error appropriately */ }
+            .catch { /* erorr */ }
             .collectLatest {
-                // Triggering a refresh after saving
                 getFlashcardSets()
             }
     }
 
     fun deleteFlashcardSet(setId: Int) = viewModelScope.launch {
         multipleChoiceFlashcardStorage.delete(setId)
-            .catch { /* Handle the error appropriately */ }
+            .catch { /* error */ }
             .collectLatest {
-                // Triggering a refresh after deleting
                 getFlashcardSets()
             }
     }
 
     fun updateFlashcardSet(setId: Int, updatedSet: MultipleChoiceFlashcardSet) = viewModelScope.launch {
         multipleChoiceFlashcardStorage.edit(setId, updatedSet)
-            .catch { /* Handle the error appropriately */ }
+            .catch { /* error */ }
             .collectLatest {
-                // Triggering a refresh after updating
                 getFlashcardSets()
             }
     }
