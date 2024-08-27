@@ -30,10 +30,9 @@ fun CreateTraditionalFlashcardSetScreen(
     navController: NavController,
     viewModel: CreateTraditionalFlashcardViewModel = koinViewModel()
 ) {
-    // Initialize the flashcards list with one empty flashcard
     var title by remember { mutableStateOf("") }
     var flashcards by remember { mutableStateOf(listOf(TraditionalFlashcard(0, "", ""))) }
-    var hasAttemptedSave by remember { mutableStateOf(false) } // Track save attempts
+    var hasAttemptedSave by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     Scaffold(
@@ -47,7 +46,7 @@ fun CreateTraditionalFlashcardSetScreen(
                 },
                 actions = {
                     IconButton(onClick = {
-                        hasAttemptedSave = true // User attempted to save
+                        hasAttemptedSave = true
                         when {
                             title.isBlank() -> {
                                 Toast.makeText(context, "Title cannot be empty", Toast.LENGTH_SHORT).show()
@@ -87,14 +86,14 @@ fun CreateTraditionalFlashcardSetScreen(
                 .padding(innerPadding)
                 .padding(16.dp)
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()) // Add scrolling capability
+                .verticalScroll(rememberScrollState())
         ) {
             OutlinedTextField(
                 value = title,
                 onValueChange = { title = it },
                 label = { Text("Flashcard Set Title") },
                 modifier = Modifier.fillMaxWidth(),
-                isError = hasAttemptedSave && title.isBlank() // Show error only after save attempt
+                isError = hasAttemptedSave && title.isBlank()
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -119,7 +118,7 @@ fun CreateTraditionalFlashcardSetScreen(
                             this[index] = this[index].copy(definition = newDefinition)
                         }
                     },
-                    showError = hasAttemptedSave // Show error only after save attempt
+                    showError = hasAttemptedSave
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -154,7 +153,7 @@ fun FlashcardInput(
                 modifier = Modifier.fillMaxWidth(),
                 textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                isError = showError && flashcard.term.isBlank() // Show error only after save attempt
+                isError = showError && flashcard.term.isBlank()
             )
             OutlinedTextField(
                 value = flashcard.definition,
@@ -163,7 +162,7 @@ fun FlashcardInput(
                 modifier = Modifier.fillMaxWidth(),
                 textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                isError = showError && flashcard.definition.isBlank() // Show error only after save attempt
+                isError = showError && flashcard.definition.isBlank()
             )
         }
     }
