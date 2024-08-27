@@ -51,7 +51,11 @@ android {
 }
 
 dependencies {
-
+    implementation("io.insert-koin:koin-androidx-compose:3.4.5")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("io.insert-koin:koin-android:3.1.4")
+    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("androidx.privacysandbox.tools:tools-core:1.0.0-alpha09")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

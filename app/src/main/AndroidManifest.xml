@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".MainApplication"
         android:icon="@mipmap/icon"
         android:roundIcon="@mipmap/icon"
         android:allowBackup="true"

@@ -11,7 +11,10 @@ data class TraditionalFlashcardSet(
     val id: Int,
     val title: String,
     val flashcards: List<TraditionalFlashcard>
-) : Parcelable {
+) : Parcelable, Identifiable {
+
+    override fun getIdentifier() = id
+
     companion object {
         /**
          * Gets a list of basic (pre-defined) flashcard sets

@@ -63,7 +63,7 @@ fun ChooseFlashCardStyle(navController: NavController, modifier: Modifier = Modi
                 ) {
                     Button(
                         onClick = {
-                            navController.navigate("traditional_flashcard_screen")
+                            navController.navigate("create_traditional_flashcard_screen")
                         },
                         modifier = Modifier.fillMaxWidth(0.8f)
                     ) {
