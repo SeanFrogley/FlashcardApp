@@ -11,7 +11,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -19,6 +18,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceOption
 import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceFlashcard
+
+import android.content.Intent
+import android.net.Uri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,11 +63,11 @@ fun CreateMultipleChoiceFlashcardSetScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    flashcards = flashcards.toMutableList().apply {
-                        add(generateNewFlashcard())
-                    }
-                    selectedOptionIndices = selectedOptionIndices.toMutableList().apply {
-                        add(-1)
+                    if (flashcards.size >= 4) {
+                        Toast.makeText(context, "Cannot add more than 4 questions", Toast.LENGTH_SHORT).show()
+                    } else {
+                        flashcards = flashcards.toMutableList().apply { add(generateNewFlashcard()) }
+                        selectedOptionIndices = selectedOptionIndices.toMutableList().apply { add(-1) }
                     }
                 },
                 modifier = Modifier.padding(16.dp)
@@ -119,7 +121,13 @@ fun CreateMultipleChoiceFlashcardSetScreen(
                         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                         isError = hasAttemptedSave && flashcard.question.isBlank()
                     )
-                    IconButton(onClick = { /* Additional functionality (e.g., search or voice input) */ }) {
+                    IconButton(onClick = {
+                        if (flashcard.question.isBlank()) {
+                            Toast.makeText(context, "Question cannot be empty", Toast.LENGTH_SHORT).show()
+                        } else {
+                            openWebSearch(context, flashcard.question)
+                        }
+                    }) {
                         Icon(Icons.Default.Search, contentDescription = "Search Question")
                     }
                 }
@@ -216,4 +224,9 @@ fun validateFlashcards(
     }
 
     return hasErrors
+}
+
+fun openWebSearch(context: android.content.Context, query: String) {
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=$query"))
+    context.startActivity(intent)
 }
