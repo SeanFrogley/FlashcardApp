@@ -79,4 +79,11 @@ class PersistentStorage<T>(
         private const val OPERATION_FAILURE = -1
         private const val EMPTY_JSON_STRING = "[]"
     }
+
+    fun clear(): Flow<Unit> = flow {
+        dataStore.edit { preferences ->
+            preferences.remove(preferenceKey)
+        }
+        emit(Unit)
+    }
 }

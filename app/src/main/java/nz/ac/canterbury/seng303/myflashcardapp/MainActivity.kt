@@ -27,8 +27,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MyFlashcardAppTheme {
-                val traditionalFlashcardSets = getPrepopulatedTraditionalFlashcardSets()
-                val multipleChoiceFlashcardSets = getPrepopulatedMultipleChoiceFlashcardSets()
                 val navController = rememberNavController()
                 Scaffold(
                     modifier = Modifier.fillMaxSize()
@@ -45,11 +43,7 @@ class MainActivity : ComponentActivity() {
                             ChooseFlashCardStyle(navController = navController)
                         }
                         composable("view_flashcards") {
-                            ViewFlashcardScreen(
-                                navController = navController,
-                                traditionalFlashcardSets = traditionalFlashcardSets,
-                                multipleChoiceFlashcardSets = multipleChoiceFlashcardSets
-                            )
+                            ViewFlashcardSetsScreen(navController)
                         }
                         composable("play_multiple_choice_flashcard_screen") {
                             PlayMultipleChoiceFlashcardScreen(navController = navController)
@@ -70,12 +64,6 @@ class MainActivity : ComponentActivity() {
                             CreateTraditionalFlashcardSetScreen(navController)
                         }
 
-//                        composable("flashcard_screen") {
-//                            TraditionalFlashcardScreen(navController = navController)
-//                        }
-//                        composable("multiple_choice_flashcard_screen") {
-//                            MultipleChoiceFlashcardScreen(navController = navController)
-//                        }
                     }
                 }
             }

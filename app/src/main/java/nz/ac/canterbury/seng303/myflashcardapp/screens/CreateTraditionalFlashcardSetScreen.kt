@@ -2,6 +2,8 @@ package nz.ac.canterbury.seng303.myflashcardapp.screens
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -13,26 +15,25 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.myflashcardapp.models.TraditionalFlashcard
 import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.CreateTraditionalFlashcardViewModel
 import org.koin.androidx.compose.koinViewModel
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateTraditionalFlashcardSetScreen(
     navController: NavController,
-    viewModel: CreateTraditionalFlashcardViewModel = koinViewModel() // Use koinViewModel here
+    viewModel: CreateTraditionalFlashcardViewModel = koinViewModel()
 ) {
+    // Initialize the flashcards list with one empty flashcard
     var title by remember { mutableStateOf("") }
-    var flashcards by remember { mutableStateOf(mutableListOf<TraditionalFlashcard>()) }
+    var flashcards by remember { mutableStateOf(listOf(TraditionalFlashcard(0, "", ""))) }
 
     Scaffold(
         topBar = {
@@ -57,22 +58,25 @@ fun CreateTraditionalFlashcardSetScreen(
 
             )
         },
-//        floatingActionButton = {
-//            FloatingActionButton(
-//                onClick = {
-//                    flashcards.add(TraditionalFlashcard(0, "", ""))
-//                },
-//                modifier = Modifier.padding(16.dp)
-//            ) {
-//                Icon(Icons.Default.Add, contentDescription = "Add Flashcard")
-//            }
-//        }
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    flashcards = flashcards.toMutableList().apply {
+                        add(TraditionalFlashcard(0, "", ""))
+                    }
+                },
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Add Flashcard")
+            }
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .padding(16.dp)
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState()) // Add scrolling capability
         ) {
             OutlinedTextField(
                 value = title,
@@ -86,9 +90,19 @@ fun CreateTraditionalFlashcardSetScreen(
             flashcards.forEachIndexed { index, flashcard ->
                 FlashcardInput(
                     flashcard = flashcard,
-                    onRemove = { flashcards.removeAt(index) },
-                    onTermChange = { newTerm -> flashcards[index] = flashcards[index].copy(term = newTerm) },
-                    onDefinitionChange = { newDefinition -> flashcards[index] = flashcards[index].copy(definition = newDefinition) }
+                    onRemove = {
+                        flashcards = flashcards.toMutableList().apply { removeAt(index) }
+                    },
+                    onTermChange = { newTerm ->
+                        flashcards = flashcards.toMutableList().apply {
+                            this[index] = this[index].copy(term = newTerm)
+                        }
+                    },
+                    onDefinitionChange = { newDefinition ->
+                        flashcards = flashcards.toMutableList().apply {
+                            this[index] = this[index].copy(definition = newDefinition)
+                        }
+                    }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }

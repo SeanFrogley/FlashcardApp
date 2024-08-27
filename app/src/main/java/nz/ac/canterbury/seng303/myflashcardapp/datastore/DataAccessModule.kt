@@ -10,6 +10,7 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.FlowPreview
 import nz.ac.canterbury.seng303.myflashcardapp.models.TraditionalFlashcardSet
 import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.CreateTraditionalFlashcardViewModel
+import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.ViewFlashcardSetsViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -34,4 +35,7 @@ val dataAccessModule = module {
             traditionalFlashcardStorage = get()
         )
     }
+
+    viewModel { ViewFlashcardSetsViewModel(get()) }
+
 }
