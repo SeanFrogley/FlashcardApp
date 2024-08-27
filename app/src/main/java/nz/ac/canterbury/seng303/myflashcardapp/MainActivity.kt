@@ -1,5 +1,8 @@
 package nz.ac.canterbury.seng303.myflashcardapp
 
+import CreateMultipleChoiceFlashcardSetScreen
+import CreateTraditionalFlashcardSetScreen
+import ViewFlashcardSetsScreen
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -14,10 +17,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceFlashcardSet
-import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceFlashcardSet.Companion.getPrepopulatedMultipleChoiceFlashcardSets
-import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceOption
-import nz.ac.canterbury.seng303.myflashcardapp.models.TraditionalFlashcardSet.Companion.getPrepopulatedTraditionalFlashcardSets
 import nz.ac.canterbury.seng303.myflashcardapp.screens.*
 import nz.ac.canterbury.seng303.myflashcardapp.ui.theme.MyFlashcardAppTheme
 
@@ -27,8 +26,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MyFlashcardAppTheme {
-                val traditionalFlashcardSets = getPrepopulatedTraditionalFlashcardSets()
-                val multipleChoiceFlashcardSets = getPrepopulatedMultipleChoiceFlashcardSets()
                 val navController = rememberNavController()
                 Scaffold(
                     modifier = Modifier.fillMaxSize()
@@ -45,11 +42,7 @@ class MainActivity : ComponentActivity() {
                             ChooseFlashCardStyle(navController = navController)
                         }
                         composable("view_flashcards") {
-                            ViewFlashcardScreen(
-                                navController = navController,
-                                traditionalFlashcardSets = traditionalFlashcardSets,
-                                multipleChoiceFlashcardSets = multipleChoiceFlashcardSets
-                            )
+                            ViewFlashcardSetsScreen(navController)
                         }
                         composable("play_multiple_choice_flashcard_screen") {
                             PlayMultipleChoiceFlashcardScreen(navController = navController)
@@ -63,19 +56,13 @@ class MainActivity : ComponentActivity() {
                         composable("traditional_results_screen") {
                             TraditionalResultsScreen(navController = navController)
                         }
-                        composable("traditional_flashcard_screen") {
-                            TraditionalFlashcardScreen(navController = navController)
+                        composable("create_multiple_choice_flashcard_screen") {
+                            CreateMultipleChoiceFlashcardSetScreen(navController)
                         }
-                        composable("multiple_choice_flashcard_screen") {
-                            MultipleChoiceFlashcardScreen(navController = navController)
+                        composable("create_traditional_flashcard_screen") {
+                            CreateTraditionalFlashcardSetScreen(navController)
                         }
 
-//                        composable("flashcard_screen") {
-//                            TraditionalFlashcardScreen(navController = navController)
-//                        }
-//                        composable("multiple_choice_flashcard_screen") {
-//                            MultipleChoiceFlashcardScreen(navController = navController)
-//                        }
                     }
                 }
             }
