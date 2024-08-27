@@ -5,14 +5,14 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.first
-import android.util.Log
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collect
 import nz.ac.canterbury.seng303.myflashcardapp.datastore.Storage
 import nz.ac.canterbury.seng303.myflashcardapp.models.TraditionalFlashcardSet
-import kotlin.random.Random
-import kotlinx.coroutines.flow.collect
 import nz.ac.canterbury.seng303.myflashcardapp.models.TraditionalFlashcard
+import android.util.Log
+import kotlin.random.Random
 
 class CreateTraditionalFlashcardViewModel(
     private val traditionalFlashcardStorage: Storage<TraditionalFlashcardSet>
@@ -21,34 +21,30 @@ class CreateTraditionalFlashcardViewModel(
     private val _flashcardSets = MutableStateFlow<List<TraditionalFlashcardSet>>(emptyList())
     val flashcardSets: StateFlow<List<TraditionalFlashcardSet>> get() = _flashcardSets
 
-    fun getFlashcardSets() = viewModelScope.launch {
-        traditionalFlashcardStorage.getAll()
-            .catch { Log.e("FLASHCARD_VIEW_MODEL", it.toString()) }
-            .collect { _flashcardSets.emit(it) }
-    }
-
     private val _selectedFlashcardSet = MutableStateFlow<TraditionalFlashcardSet?>(null)
     val selectedFlashcardSet: StateFlow<TraditionalFlashcardSet?> = _selectedFlashcardSet
 
-    fun getFlashcardSetById(setId: Int?) = viewModelScope.launch {
-        _selectedFlashcardSet.value = if (setId != null) {
-            traditionalFlashcardStorage.get { it.getIdentifier() == setId }.first()
-        } else {
-            null
-        }
+    init {
+        // Automatically load flashcard sets when the ViewModel is initialized
+        loadFlashcardSets()
+    }
+
+    private fun loadFlashcardSets() = viewModelScope.launch {
+        traditionalFlashcardStorage.getAll()
+            .catch { Log.e("FLASHCARD_VIEW_MODEL", "Error loading flashcard sets: $it") }
+            .collect { sets -> _flashcardSets.value = sets }
     }
 
     fun loadDefaultFlashcardSetsIfNoneExist() = viewModelScope.launch {
         val currentSets = traditionalFlashcardStorage.getAll().first()
         if (currentSets.isEmpty()) {
             Log.d("FLASHCARD_VIEW_MODEL", "Inserting default flashcard sets...")
-            // Assuming you have a method to get default sets
             val defaultSets = getDefaultFlashcardSets()
             traditionalFlashcardStorage.insertAll(defaultSets)
-                .catch { Log.w("FLASHCARD_VIEW_MODEL", "Could not insert default flashcard sets") }
+                .catch { Log.w("FLASHCARD_VIEW_MODEL", "Could not insert default flashcard sets: $it") }
                 .collect {
                     Log.d("FLASHCARD_VIEW_MODEL", "Default flashcard sets inserted successfully")
-                    _flashcardSets.emit(defaultSets)
+                    _flashcardSets.value = defaultSets
                 }
         }
     }
@@ -61,12 +57,11 @@ class CreateTraditionalFlashcardViewModel(
         )
 
         traditionalFlashcardStorage.insert(flashcardSet)
-            .catch { Log.e("FLASHCARD_VIEW_MODEL", "Could not insert flashcard set") }
-            .collect()
-
-        traditionalFlashcardStorage.getAll()
-            .catch { Log.e("FLASHCARD_VIEW_MODEL", it.toString()) }
-            .collect { _flashcardSets.emit(it) }
+            .catch { Log.e("FLASHCARD_VIEW_MODEL", "Could not insert flashcard set: $it") }
+            .collect {
+                Log.d("FLASHCARD_VIEW_MODEL", "Flashcard set inserted successfully")
+                _flashcardSets.value = _flashcardSets.value + flashcardSet
+            }
     }
 
     private fun getDefaultFlashcardSets(): List<TraditionalFlashcardSet> {
@@ -74,3 +69,4 @@ class CreateTraditionalFlashcardViewModel(
         return emptyList() // Placeholder
     }
 }
+

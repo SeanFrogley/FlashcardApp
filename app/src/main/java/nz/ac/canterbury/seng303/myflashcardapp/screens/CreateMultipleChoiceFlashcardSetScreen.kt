@@ -1,5 +1,6 @@
-package nz.ac.canterbury.seng303.myflashcardapp.screens
-
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -11,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -18,14 +20,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceOption
 import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceFlashcard
-
-import android.content.Intent
-import android.net.Uri
+import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.CreateMultipleChoiceFlashcardViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateMultipleChoiceFlashcardSetScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: CreateMultipleChoiceFlashcardViewModel = koinViewModel()
 ) {
     var title by remember { mutableStateOf("") }
     var flashcards by remember { mutableStateOf(mutableListOf(generateNewFlashcard())) }
@@ -47,12 +49,20 @@ fun CreateMultipleChoiceFlashcardSetScreen(
                         hasAttemptedSave = true
                         val hasErrors = validateFlashcards(flashcards, selectedOptionIndices)
 
-                        if (title.isBlank()) {
-                            Toast.makeText(context, "Flashcard Set Title cannot be empty", Toast.LENGTH_SHORT).show()
-                        } else if (hasErrors) {
-                            Toast.makeText(context, "Please correct the errors in the flashcards", Toast.LENGTH_SHORT).show()
-                        } else {
-                            // Save functionality will be implemented later
+                        when {
+                            title.isBlank() -> {
+                                Toast.makeText(context, "Flashcard Set Title cannot be empty", Toast.LENGTH_SHORT).show()
+                            }
+                            hasErrors -> {
+                                Toast.makeText(context, "Please correct the errors in the flashcards", Toast.LENGTH_SHORT).show()
+                            }
+                            else -> {
+                                viewModel.saveMultipleChoiceFlashcardSet(title, flashcards)
+                                Log.d("CreateFlashcardSet", "Flashcard set saved successfully: $title with ${flashcards.size} flashcards")
+                                navController.navigate("view_flashcards") {
+                                    popUpTo("create_multiple_choice_flashcard_screen") { inclusive = true }
+                                }
+                            }
                         }
                     }) {
                         Icon(Icons.Default.Check, contentDescription = "Save")
@@ -225,6 +235,7 @@ fun validateFlashcards(
 
     return hasErrors
 }
+
 
 fun openWebSearch(context: android.content.Context, query: String) {
     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=$query"))
