@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng303.myflashcardapp
 
 import CreateTraditionalFlashcardSetScreen
+import ViewFlashcardSetsScreen
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -15,10 +16,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceFlashcardSet
-import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceFlashcardSet.Companion.getPrepopulatedMultipleChoiceFlashcardSets
-import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceOption
-import nz.ac.canterbury.seng303.myflashcardapp.models.TraditionalFlashcardSet.Companion.getPrepopulatedTraditionalFlashcardSets
 import nz.ac.canterbury.seng303.myflashcardapp.screens.*
 import nz.ac.canterbury.seng303.myflashcardapp.ui.theme.MyFlashcardAppTheme
 

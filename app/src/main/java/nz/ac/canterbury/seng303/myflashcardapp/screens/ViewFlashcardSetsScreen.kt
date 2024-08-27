@@ -1,11 +1,12 @@
-package nz.ac.canterbury.seng303.myflashcardapp.screens
-
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -17,6 +18,8 @@ import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.myflashcardapp.models.TraditionalFlashcardSet
 import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.ViewFlashcardSetsViewModel
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,58 +41,60 @@ fun ViewFlashcardSetsScreen(
             )
         }
     ) { innerPadding ->
-        Column(
+        LazyColumn(
+            contentPadding = innerPadding,
             modifier = Modifier
-                .padding(innerPadding)
                 .padding(16.dp)
                 .fillMaxSize()
         ) {
             // Multiple Choice Flashcard Sets Section
-            Text(
-                text = "Multiple Choice Flashcard Sets",
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
+            item {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Multiple Choice Flashcard Sets",
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(onClick = {
+                        // Navigate to the create multiple choice flashcard set screen
+                        // navController.navigate("createMultipleChoiceFlashcardSet")
+                    }) {
+                        Icon(Icons.Default.Add, contentDescription = "Add Multiple Choice Set")
+                    }
+                }
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
+                Spacer(modifier = Modifier.height(8.dp))
+
                 Text(
                     text = "You have no Multiple Choice Sets yet",
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.padding(vertical = 8.dp)
                 )
-                IconButton(onClick = {
-                    // Navigate to the create multiple choice flashcard set screen
-                    // navController.navigate("createMultipleChoiceFlashcardSet")
-                }) {
-                    Icon(Icons.Default.Add, contentDescription = "Add Multiple Choice Set")
-                }
-            }
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
             // Traditional Flashcard Sets Section
-            Text(
-                text = "Traditional Flashcard Sets",
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = if (flashcardSets.isEmpty()) "You have no Traditional Sets yet" else "",
-                    modifier = Modifier.weight(1f)
-                )
-                IconButton(onClick = {
-                    navController.navigate("createFlashcardSet")
-                }) {
-                    Icon(Icons.Default.Add, contentDescription = "Add Flashcard Set")
+            item {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Traditional Flashcard Sets",
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(onClick = {
+                        navController.navigate("create_traditional_flashcard_screen")
+                    }) {
+                        Icon(Icons.Default.Add, contentDescription = "Add Flashcard Set")
+                    }
                 }
             }
 
-            flashcardSets.forEach { flashcardSet ->
+            // Display flashcard sets in a list
+            items(flashcardSets) { flashcardSet ->
                 FlashcardSetItem(flashcardSet) {
                     // Navigate to a screen to view/edit the specific flashcard set
                     // Example: navController.navigate("flashcardSetDetail/${flashcardSet.id}")
@@ -99,27 +104,34 @@ fun ViewFlashcardSetsScreen(
     }
 }
 
+
 @Composable
 fun FlashcardSetItem(
     flashcardSet: TraditionalFlashcardSet,
-    onClick: () -> Unit
+    onPlayClick: () -> Unit // Callback for the play button
 ) {
-    Card(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .clickable { onClick() }
+            .padding(vertical = 4.dp)
+            .padding(10.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(text = flashcardSet.title)
-            }
-            Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "Go to Set")
+        Column(modifier = Modifier.weight(1f)) {
+            Text(text = flashcardSet.title)
+            // Additional content can be added here
+        }
+        // Play Button
+        IconButton(onClick = onPlayClick) {
+            Icon(imageVector = Icons.Default.PlayArrow, contentDescription = "Play Set")
+        }
+        // Edit Button
+        IconButton(onClick = { /* Implement edit functionality later */ }) {
+            Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Set")
+        }
+        // Delete Button
+        IconButton(onClick = { /* Implement delete functionality later */ }) {
+            Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Set")
         }
     }
 }
