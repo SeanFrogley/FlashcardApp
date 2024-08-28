@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng303.myflashcardapp.screens
 
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -10,6 +12,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -141,8 +144,26 @@ fun FlashcardInput(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
     ) {
-        IconButton(onClick = onRemove) {
-            Icon(Icons.Default.Close, contentDescription = "Remove Flashcard")
+        val context = LocalContext.current
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(8.dp)
+        ) {
+            IconButton(
+                onClick = {
+                    if (flashcard.term.isBlank()) {
+                        Toast.makeText(context, "Please enter a term before searching", Toast.LENGTH_SHORT).show()
+                    } else {
+                        openWebSearch(context, flashcard.term)
+                    }
+                }
+            ) {
+                Icon(Icons.Default.Search, contentDescription = "Search Term")
+            }
+            IconButton(onClick = onRemove) {
+                Icon(Icons.Default.Close, contentDescription = "Remove Flashcard")
+            }
         }
         Column(
             modifier = Modifier
@@ -169,4 +190,9 @@ fun FlashcardInput(
             )
         }
     }
+}
+
+fun openWebSearch(context: android.content.Context, query: String) {
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=$query"))
+    context.startActivity(intent)
 }
