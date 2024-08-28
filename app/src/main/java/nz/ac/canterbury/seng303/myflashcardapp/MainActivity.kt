@@ -70,6 +70,11 @@ class MainActivity : ComponentActivity() {
                             MultipleChoiceResultsScreen(navController = navController, setId = setId)
                         }
 
+                        composable("traditional_results_screen/{setId}") { backStackEntry ->
+                            val setId = backStackEntry.arguments?.getString("setId")?.toIntOrNull() ?: return@composable
+                            TraditionalResultsScreen(navController = navController, setId = setId)
+                        }
+
                     }
                 }
             }
