@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng303.myflashcardapp
 
 import CreateMultipleChoiceFlashcardSetScreen
-import CreateTraditionalFlashcardSetScreen
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -48,12 +47,6 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("play_traditional_flashcard_screen") {
                             PlayTraditionalFlashcardScreen(navController = navController)
-                        }
-                        composable("multiple_choice_results_screen") {
-                            MultipleChoiceResultsScreen(navController = navController)
-                        }
-                        composable("traditional_results_screen") {
-                            TraditionalResultsScreen(navController = navController)
                         }
                         composable("create_multiple_choice_flashcard_screen") {
                             CreateMultipleChoiceFlashcardSetScreen(navController)

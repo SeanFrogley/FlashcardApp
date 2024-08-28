@@ -28,9 +28,7 @@ class ViewFlashcardSetsViewModel(
 
     private fun loadTraditionalFlashcardSets() = viewModelScope.launch {
         traditionalFlashcardStorage.getAll()
-            .catch { e -> // Handle the error
-                // Log the error or handle it appropriately
-            }
+            .catch { e -> /* Handle error */ }
             .collect { sets ->
                 _traditionalFlashcardSets.emit(sets)
             }
@@ -38,11 +36,25 @@ class ViewFlashcardSetsViewModel(
 
     private fun loadMultipleChoiceFlashcardSets() = viewModelScope.launch {
         multipleChoiceFlashcardStorage.getAll()
-            .catch { e -> // Handle the error
-                // Log the error or handle it appropriately
-            }
+            .catch { e -> /* Handle error */ }
             .collect { sets ->
                 _multipleChoiceFlashcardSets.emit(sets)
+            }
+    }
+
+    fun deleteTraditionalFlashcardSet(setId: Int) = viewModelScope.launch {
+        traditionalFlashcardStorage.delete(setId)
+            .catch { /* Handle error */ }
+            .collect {
+                loadTraditionalFlashcardSets() // Reload sets after deletion
+            }
+    }
+
+    fun deleteMultipleChoiceFlashcardSet(setId: Int) = viewModelScope.launch {
+        multipleChoiceFlashcardStorage.delete(setId)
+            .catch { /* Handle error */ }
+            .collect {
+                loadMultipleChoiceFlashcardSets() // Reload sets after deletion
             }
     }
 }

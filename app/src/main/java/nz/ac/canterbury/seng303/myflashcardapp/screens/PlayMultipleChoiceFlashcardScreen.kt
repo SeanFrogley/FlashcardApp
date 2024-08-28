@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng303.myflashcardapp.screens
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

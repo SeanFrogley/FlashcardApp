@@ -23,6 +23,9 @@ import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.ViewFlashcardSetsViewM
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,15 +35,15 @@ fun ViewFlashcardSetsScreen(
 ) {
     val multipleChoiceFlashcardSets by viewModel.multipleChoiceFlashcardSets.collectAsState()
     val traditionalFlashcardSets by viewModel.traditionalFlashcardSets.collectAsState()
-    Log.d("ViewFlashcardSetsScreen", "TraditionalFlashcardSets: $traditionalFlashcardSets")
-    Log.d("ViewFlashcardSetsScreen", "MultipleChoiceFlashcardSets: $multipleChoiceFlashcardSets")
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("View Flashcard Sets") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = {
+                        navController.navigate("main_screen")
+                    }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 }
@@ -64,8 +67,7 @@ fun ViewFlashcardSetsScreen(
                         modifier = Modifier.weight(1f)
                     )
                     IconButton(onClick = {
-                        // Navigate to the create multiple choice flashcard set screen
-                        // navController.navigate("createMultipleChoiceFlashcardSet")
+                        navController.navigate("create_multiple_choice_flashcard_screen")
                     }) {
                         Icon(Icons.Default.Add, contentDescription = "Add Multiple Choice Set")
                     }
@@ -86,7 +88,8 @@ fun ViewFlashcardSetsScreen(
                         title = flashcardSet.title,
                         onPlayClick = {
                             // Navigate to a screen to view/play the specific flashcard set
-                        }
+                        },
+                        onDeleteClick = { viewModel.deleteMultipleChoiceFlashcardSet(flashcardSet.id) }
                     )
                 }
             }
@@ -126,7 +129,8 @@ fun ViewFlashcardSetsScreen(
                         title = flashcardSet.title,
                         onPlayClick = {
                             // Navigate to a screen to view/play the specific flashcard set
-                        }
+                        },
+                        onDeleteClick = { viewModel.deleteTraditionalFlashcardSet(flashcardSet.id) }
                     )
                 }
             }
@@ -134,12 +138,14 @@ fun ViewFlashcardSetsScreen(
     }
 }
 
-
 @Composable
 fun FlashcardSetItem(
     title: String,
-    onPlayClick: () -> Unit // Callback for the play button
+    onPlayClick: () -> Unit,
+    onDeleteClick: () -> Unit
 ) {
+    var showDialog by remember { mutableStateOf(false) }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -149,7 +155,6 @@ fun FlashcardSetItem(
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(text = title)
-            // Additional content can be added here
         }
         // Play Button
         IconButton(onClick = onPlayClick) {
@@ -160,8 +165,48 @@ fun FlashcardSetItem(
             Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Set")
         }
         // Delete Button
-        IconButton(onClick = { /* Implement delete functionality later */ }) {
+        IconButton(onClick = { showDialog = true }) {
             Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Set")
         }
     }
+
+    // Show confirmation dialog when delete button is clicked
+    if (showDialog) {
+        ConfirmDeleteDialog(
+            onConfirm = onDeleteClick,
+            onDismiss = { showDialog = false }
+        )
+    }
+}
+
+
+@Composable
+fun ConfirmDeleteDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = "Confirm Deletion")
+        },
+        text = {
+            Text("Are you sure you want to delete this flashcard set? This action cannot be undone.")
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onConfirm()
+                    onDismiss()
+                }
+            ) {
+                Text("Delete")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
 }

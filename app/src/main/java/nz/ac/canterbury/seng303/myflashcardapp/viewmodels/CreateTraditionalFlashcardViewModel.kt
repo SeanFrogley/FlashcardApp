@@ -24,10 +24,6 @@ class CreateTraditionalFlashcardViewModel(
     private val _selectedFlashcardSet = MutableStateFlow<TraditionalFlashcardSet?>(null)
     val selectedFlashcardSet: StateFlow<TraditionalFlashcardSet?> = _selectedFlashcardSet
 
-    init {
-        Log.d("CreateTraditionalFlashcardStorage", "Using traditionalFlashcardStorage: $traditionalFlashcardStorage")
-    }
-
     private fun loadFlashcardSets() = viewModelScope.launch {
         traditionalFlashcardStorage.getAll()
             .catch { Log.e("FLASHCARD_VIEW_MODEL", "Error loading flashcard sets: $it") }

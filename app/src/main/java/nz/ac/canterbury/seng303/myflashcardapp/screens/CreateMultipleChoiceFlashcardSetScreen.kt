@@ -1,6 +1,5 @@
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -12,7 +11,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -40,7 +38,9 @@ fun CreateMultipleChoiceFlashcardSetScreen(
             TopAppBar(
                 title = { Text("Create Flashcard Set") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = {
+                        navController.navigate("choose_flashcard_style")
+                    }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 },
@@ -58,7 +58,6 @@ fun CreateMultipleChoiceFlashcardSetScreen(
                             }
                             else -> {
                                 viewModel.saveMultipleChoiceFlashcardSet(title, flashcards)
-                                Log.d("CreateFlashcardSet", "Flashcard set saved successfully: $title with ${flashcards.size} flashcards")
                                 navController.navigate("view_flashcards") {
                                     popUpTo("create_multiple_choice_flashcard_screen") { inclusive = true }
                                 }

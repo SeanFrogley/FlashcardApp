@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng303.myflashcardapp.datastore
 
-import android.util.Log
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -20,18 +19,12 @@ class TraditionalFlashcardPersistentStorage<T>(
     private val preferenceKey: Preferences.Key<String>
 ) : Storage<T> where T : Identifiable {
 
-    init {
-        Log.d("TraditionalStorage", "Initialized with DataStore: ${dataStore.hashCode()} and Key: ${preferenceKey.name}")
-    }
-
     override fun insert(data: T): Flow<Int> = flow {
-        Log.d("TraditionalStorage", "Inserting data into ${preferenceKey.name}: $data")
         val cachedDataClone = getAll().first().toMutableList()
         cachedDataClone.add(data)
         dataStore.edit { preferences ->
             val jsonString = gson.toJson(cachedDataClone, type)
             preferences[preferenceKey] = jsonString
-            Log.d("PersistentStorage", "DataStore after insertion: ${preferences[preferenceKey]}")
             emit(OPERATION_SUCCESS)
         }
     }

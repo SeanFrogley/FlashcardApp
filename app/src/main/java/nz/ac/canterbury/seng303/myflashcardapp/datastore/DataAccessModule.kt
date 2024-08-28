@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng303.myflashcardapp.datastore
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey

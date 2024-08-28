@@ -1,4 +1,5 @@
-import android.util.Log
+package nz.ac.canterbury.seng303.myflashcardapp.screens
+
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -40,7 +41,9 @@ fun CreateTraditionalFlashcardSetScreen(
             TopAppBar(
                 title = { Text("Create Flashcard Set") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = {
+                        navController.navigate("choose_flashcard_style")
+                    }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 },
@@ -56,7 +59,6 @@ fun CreateTraditionalFlashcardSetScreen(
                             }
                             else -> {
                                 viewModel.saveFlashcardSet(title, flashcards)
-                                Log.d("CreateFlashcardSet", "Flashcard set saved successfully: $title with ${flashcards.size} flashcards")
                                 navController.navigate("view_flashcards") {
                                     popUpTo("createFlashcardSet") { inclusive = true }
                                 }
