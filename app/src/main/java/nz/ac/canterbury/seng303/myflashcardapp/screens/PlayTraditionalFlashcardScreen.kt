@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.myflashcardapp.screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -55,7 +56,6 @@ fun PlayTraditionalFlashcardScreen(
 
     // Collect the flashcard set from the ViewModel
     val flashcardSet by viewModel.flashcardSet.collectAsState()
-
     var showAnswer by remember { mutableStateOf(false) }
     var currentIndex by remember { mutableIntStateOf(0) }
     val context = LocalContext.current

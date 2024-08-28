@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.myflashcardapp.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
@@ -29,7 +30,9 @@ fun ViewTraditionalFlashcardScreen(
     viewModel.loadFlashcardSet(setId)
 
     val flashcardSet by viewModel.flashcardSet.collectAsState()
-
+    LaunchedEffect(flashcardSet) {
+        Log.d("PlayTraditionalFlashcardScreen", "Loaded Flashcard Set: $flashcardSet")
+    }
     Scaffold(
         topBar = {
             TopAppBar(

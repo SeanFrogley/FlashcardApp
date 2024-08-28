@@ -22,15 +22,24 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceFlashcardSet
 import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceOption
+import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.PlayMultipleChoiceFlashcardViewModel
+import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.PlayTraditionalFlashcardViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayMultipleChoiceFlashcardScreen(
     navController: NavController,
-    modifier: Modifier = Modifier
+    setId: Int,
+    viewModel: PlayMultipleChoiceFlashcardViewModel = koinViewModel()
 ) {
-    val flashcardSet = navController.previousBackStackEntry
-        ?.savedStateHandle?.get<MultipleChoiceFlashcardSet>("flashcardSet")
+    // Load the flashcard set data
+    LaunchedEffect(setId) {
+        viewModel.loadFlashcardSet(setId)
+    }
+
+    // Collect the flashcard set from the ViewModel
+    val flashcardSet by viewModel.flashcardSet.collectAsState()
 
     var selectedOption by remember { mutableStateOf<MultipleChoiceOption?>(null) }
     var currentQuestionIndex by remember { mutableIntStateOf(0) }
@@ -127,14 +136,14 @@ fun PlayMultipleChoiceFlashcardScreen(
             ) {
                 item {
                     Text(
-                        text = flashcardSet.flashcards[currentQuestionIndex].question,
+                        text = flashcardSet!!.flashcards[currentQuestionIndex].question,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 24.dp)
                     )
                 }
 
-                items(flashcardSet.flashcards[currentQuestionIndex].options) { option ->
+                items(flashcardSet!!.flashcards[currentQuestionIndex].options) { option ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()

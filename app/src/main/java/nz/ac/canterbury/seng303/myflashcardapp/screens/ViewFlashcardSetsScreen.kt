@@ -36,9 +36,6 @@ fun ViewFlashcardSetsScreen(
     val multipleChoiceFlashcardSets by viewModel.multipleChoiceFlashcardSets.collectAsState()
     val traditionalFlashcardSets by viewModel.traditionalFlashcardSets.collectAsState()
 
-    Log.d("ViewFlashcardSetsScreen", "MultipleChoiceFlashcardSets: $multipleChoiceFlashcardSets")
-    Log.d("ViewFlashcardSetsScreen", "TraditionalFlashcardSets: $traditionalFlashcardSets")
-
     Scaffold(
         topBar = {
             TopAppBar(
