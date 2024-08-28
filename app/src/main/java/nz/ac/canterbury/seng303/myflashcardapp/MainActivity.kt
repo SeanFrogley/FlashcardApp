@@ -45,8 +45,9 @@ class MainActivity : ComponentActivity() {
                         composable("play_multiple_choice_flashcard_screen") {
                             PlayMultipleChoiceFlashcardScreen(navController = navController)
                         }
-                        composable("play_traditional_flashcard_screen") {
-                            PlayTraditionalFlashcardScreen(navController = navController)
+                        composable("play_traditional_flashcard_screen/{setId}") { backStackEntry ->
+                            val setId = backStackEntry.arguments?.getInt("setId") ?: 0
+                            PlayTraditionalFlashcardScreen(navController, setId)
                         }
                         composable("create_multiple_choice_flashcard_screen") {
                             CreateMultipleChoiceFlashcardSetScreen(navController)

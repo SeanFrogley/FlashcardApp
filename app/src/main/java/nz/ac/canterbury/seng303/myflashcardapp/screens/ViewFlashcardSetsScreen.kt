@@ -90,7 +90,7 @@ fun ViewFlashcardSetsScreen(
                     FlashcardSetItem(
                         title = flashcardSet.title,
                         onPlayClick = {
-                            // Navigate to a screen to view/play the specific flashcard set
+                            navController.navigate("play_multiple_choice_flashcard_screen/${flashcardSet.id}")
                         },
                         onEditClick = {
                             navController.navigate("edit_multiple_choice_flashcard_screen/${flashcardSet.id}")
@@ -137,7 +137,7 @@ fun ViewFlashcardSetsScreen(
                     FlashcardSetItem(
                         title = flashcardSet.title,
                         onPlayClick = {
-                            // Navigate to a screen to view/play the specific flashcard set
+                            navController.navigate("play_traditional_flashcard_screen/${flashcardSet.id}")
                         },
                         onEditClick = {
                             navController.navigate("edit_traditional_flashcard_screen/${flashcardSet.id}")
@@ -152,6 +152,7 @@ fun ViewFlashcardSetsScreen(
         }
     }
 }
+
 
 
 
