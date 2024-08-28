@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,9 +32,9 @@ fun CreateTraditionalFlashcardSetScreen(
     navController: NavController,
     viewModel: CreateTraditionalFlashcardViewModel = koinViewModel()
 ) {
-    var title by remember { mutableStateOf("") }
-    var flashcards by remember { mutableStateOf(listOf(TraditionalFlashcard(0, "", ""))) }
-    var hasAttemptedSave by remember { mutableStateOf(false) }
+    var title by rememberSaveable { mutableStateOf("") }
+    var flashcards by rememberSaveable { mutableStateOf(listOf(TraditionalFlashcard(0, "", ""))) }
+    var hasAttemptedSave by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
 
     Scaffold(

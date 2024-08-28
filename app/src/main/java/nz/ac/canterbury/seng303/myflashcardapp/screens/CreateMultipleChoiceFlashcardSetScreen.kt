@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -27,10 +28,10 @@ fun CreateMultipleChoiceFlashcardSetScreen(
     navController: NavController,
     viewModel: CreateMultipleChoiceFlashcardViewModel = koinViewModel()
 ) {
-    var title by remember { mutableStateOf("") }
-    var flashcards by remember { mutableStateOf(mutableListOf(generateNewFlashcard())) }
-    var selectedOptionIndices by remember { mutableStateOf(mutableListOf(-1)) }
-    var hasAttemptedSave by remember { mutableStateOf(false) }
+    var title by rememberSaveable { mutableStateOf("") }
+    var flashcards by rememberSaveable { mutableStateOf(mutableListOf(generateNewFlashcard())) }
+    var selectedOptionIndices by rememberSaveable { mutableStateOf(mutableListOf(-1)) }
+    var hasAttemptedSave by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
 
     Scaffold(

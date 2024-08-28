@@ -41,7 +41,7 @@ fun ChooseFlashCardStyle(navController: NavController, modifier: Modifier = Modi
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            navController.popBackStack()
+                            navController.navigate("main_screen")
                         }
                     ) {
                         Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Back")

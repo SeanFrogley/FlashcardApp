@@ -42,6 +42,16 @@ fun MainScreen(navController: NavController, modifier: Modifier = Modifier) {
             ) {
                 Text(text = "View Flashcards")
             }
+            Button(
+                onClick = {
+                    navController.navigate("play_flashcards_screen")
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp)
+            ) {
+                Text(text = "Play Flashcard Screen")
+            }
         }
     }
 }

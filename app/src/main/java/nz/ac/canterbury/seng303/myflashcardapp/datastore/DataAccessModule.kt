@@ -13,6 +13,7 @@ import nz.ac.canterbury.seng303.myflashcardapp.models.TraditionalFlashcardSet
 import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.CreateMultipleChoiceFlashcardViewModel
 import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.CreateTraditionalFlashcardViewModel
 import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.MultipleChoiceResultsViewModel
+import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.PlayFlashcardSetsViewModel
 import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.PlayMultipleChoiceFlashcardViewModel
 import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.PlayTraditionalFlashcardViewModel
 import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.TraditionalResultsViewModel
@@ -65,6 +66,13 @@ val dataAccessModule = module {
 
     viewModel {
         ViewFlashcardSetsViewModel(
+            traditionalFlashcardStorage = get(named("traditionalStorage")),
+            multipleChoiceFlashcardStorage = get(named("multipleChoiceStorage"))
+        )
+    }
+
+    viewModel {
+        PlayFlashcardSetsViewModel(
             traditionalFlashcardStorage = get(named("traditionalStorage")),
             multipleChoiceFlashcardStorage = get(named("multipleChoiceStorage"))
         )
