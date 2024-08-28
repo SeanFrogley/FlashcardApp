@@ -161,7 +161,7 @@ fun FlashcardSetItem(
     onPlayClick: () -> Unit,
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    onViewClick: () -> Unit  // Added parameter for view click
+    onViewClick: () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
@@ -193,7 +193,6 @@ fun FlashcardSetItem(
         }
     }
 
-    // Show confirmation dialog when delete button is clicked
     if (showDialog) {
         ConfirmDeleteDialog(
             onConfirm = onDeleteClick,

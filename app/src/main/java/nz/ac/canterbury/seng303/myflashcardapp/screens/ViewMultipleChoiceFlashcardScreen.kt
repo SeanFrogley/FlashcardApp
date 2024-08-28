@@ -5,9 +5,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -21,23 +26,49 @@ fun ViewMultipleChoiceFlashcardScreen(
     setId: Int,
     viewModel: ViewMultipleChoiceFlashcardViewModel = koinViewModel()
 ) {
-    // Load the flashcard set data
     viewModel.loadFlashcardSet(setId)
 
-    // Collect the flashcard set from the ViewModel
     val flashcardSet by viewModel.flashcardSet.collectAsState()
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(
-                    text = "Title: ${flashcardSet?.title ?: "Loading..."}",
-                    fontSize = 20.sp,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )},
+                modifier = Modifier.height(80.dp),
+                title = {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "Title: ${flashcardSet?.title ?: "Loading..."}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                    }
+                },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(
+                        onClick = {
+                            navController.popBackStack()
+                        }
+                    ) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = { /* do nothing, this button is just to balance the title */ },
+                        enabled = false,
+                        modifier = Modifier.alpha(0.3f)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "Check",
+                            tint = Color.Transparent
+                        )
                     }
                 }
             )
@@ -51,7 +82,6 @@ fun ViewMultipleChoiceFlashcardScreen(
                     .verticalScroll(rememberScrollState())
             ) {
 
-                // Display each flashcard's question and options
                 flashcardSet?.flashcards?.forEachIndexed { index, flashcard ->
                     Text(
                         text = "Question: ${flashcard.question}",
@@ -65,7 +95,7 @@ fun ViewMultipleChoiceFlashcardScreen(
                             modifier = Modifier.padding(start = 32.dp, bottom = 8.dp)
                         )
                     }
-                    Divider() // Adds a divider between flashcards for clarity
+                    Divider()
                 }
             }
         }
