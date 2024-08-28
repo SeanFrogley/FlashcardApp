@@ -12,7 +12,9 @@ import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceFlashcardSet
 import nz.ac.canterbury.seng303.myflashcardapp.models.TraditionalFlashcardSet
 import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.CreateMultipleChoiceFlashcardViewModel
 import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.CreateTraditionalFlashcardViewModel
+import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.ViewTraditionalFlashcardViewModel
 import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.ViewFlashcardSetsViewModel
+import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.ViewMultipleChoiceFlashcardViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -61,6 +63,18 @@ val dataAccessModule = module {
         ViewFlashcardSetsViewModel(
             traditionalFlashcardStorage = get(named("traditionalStorage")),
             multipleChoiceFlashcardStorage = get(named("multipleChoiceStorage"))
+        )
+    }
+
+    viewModel {
+        ViewTraditionalFlashcardViewModel(
+            traditionalFlashcardStorage = get(named("traditionalStorage"))
+        )
+    }
+
+    viewModel {
+        ViewMultipleChoiceFlashcardViewModel(
+            multipleChoiceFlashcardPersistentStorage = get(named("multipleChoiceStorage"))
         )
     }
 }

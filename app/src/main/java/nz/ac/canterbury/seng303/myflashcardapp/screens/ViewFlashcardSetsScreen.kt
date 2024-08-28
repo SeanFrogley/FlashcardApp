@@ -36,6 +36,9 @@ fun ViewFlashcardSetsScreen(
     val multipleChoiceFlashcardSets by viewModel.multipleChoiceFlashcardSets.collectAsState()
     val traditionalFlashcardSets by viewModel.traditionalFlashcardSets.collectAsState()
 
+    Log.d("ViewFlashcardSetsScreen", "MultipleChoiceFlashcardSets: $multipleChoiceFlashcardSets")
+    Log.d("ViewFlashcardSetsScreen", "TraditionalFlashcardSets: $traditionalFlashcardSets")
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -89,7 +92,13 @@ fun ViewFlashcardSetsScreen(
                         onPlayClick = {
                             // Navigate to a screen to view/play the specific flashcard set
                         },
-                        onDeleteClick = { viewModel.deleteMultipleChoiceFlashcardSet(flashcardSet.id) }
+                        onEditClick = {
+                            navController.navigate("edit_multiple_choice_flashcard_screen/${flashcardSet.id}")
+                        },
+                        onDeleteClick = { viewModel.deleteMultipleChoiceFlashcardSet(flashcardSet.id) },
+                        onViewClick = {
+                            navController.navigate("view_multiple_choice_flashcard_screen/${flashcardSet.id}")
+                        }
                     )
                 }
             }
@@ -130,7 +139,13 @@ fun ViewFlashcardSetsScreen(
                         onPlayClick = {
                             // Navigate to a screen to view/play the specific flashcard set
                         },
-                        onDeleteClick = { viewModel.deleteTraditionalFlashcardSet(flashcardSet.id) }
+                        onEditClick = {
+                            navController.navigate("edit_traditional_flashcard_screen/${flashcardSet.id}")
+                        },
+                        onDeleteClick = { viewModel.deleteTraditionalFlashcardSet(flashcardSet.id) },
+                        onViewClick = {
+                            navController.navigate("view_traditional_flashcard_screen/${flashcardSet.id}")
+                        }
                     )
                 }
             }
@@ -138,11 +153,15 @@ fun ViewFlashcardSetsScreen(
     }
 }
 
+
+
 @Composable
 fun FlashcardSetItem(
     title: String,
     onPlayClick: () -> Unit,
-    onDeleteClick: () -> Unit
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    onViewClick: () -> Unit  // Added parameter for view click
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
@@ -156,12 +175,16 @@ fun FlashcardSetItem(
         Column(modifier = Modifier.weight(1f)) {
             Text(text = title)
         }
+        // View Button
+        IconButton(onClick = onViewClick) {
+            Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "View Set")
+        }
         // Play Button
         IconButton(onClick = onPlayClick) {
             Icon(imageVector = Icons.Default.PlayArrow, contentDescription = "Play Set")
         }
         // Edit Button
-        IconButton(onClick = { /* Implement edit functionality later */ }) {
+        IconButton(onClick = onEditClick) {
             Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Set")
         }
         // Delete Button
@@ -178,6 +201,8 @@ fun FlashcardSetItem(
         )
     }
 }
+
+
 
 
 @Composable
