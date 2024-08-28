@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.myflashcardapp.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,6 +12,7 @@ import nz.ac.canterbury.seng303.myflashcardapp.datastore.Storage
 import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceFlashcardSet
 import kotlin.random.Random
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceFlashcard
 
 class CreateMultipleChoiceFlashcardViewModel(
@@ -20,13 +22,6 @@ class CreateMultipleChoiceFlashcardViewModel(
     private val _flashcardSets = MutableStateFlow<List<MultipleChoiceFlashcardSet>>(emptyList())
     val flashcardSets: StateFlow<List<MultipleChoiceFlashcardSet>> get() = _flashcardSets
 
-    fun getFlashcardSets() = viewModelScope.launch {
-        multipleChoiceFlashcardStorage.getAll()
-            .catch { /* Handle the error appropriately */ }
-            .collectLatest { sets ->
-                _flashcardSets.value = sets
-            }
-    }
 
     fun saveMultipleChoiceFlashcardSet(title: String, flashcards: List<MultipleChoiceFlashcard>) = viewModelScope.launch {
         val flashcardSet = MultipleChoiceFlashcardSet(
@@ -36,12 +31,13 @@ class CreateMultipleChoiceFlashcardViewModel(
         )
 
         multipleChoiceFlashcardStorage.insert(flashcardSet)
-            .catch { /* Handle the error appropriately */ }
-            .collectLatest {
-                // Triggering a refresh after saving
-                getFlashcardSets()
+            .catch { Log.e("MULTIPLE_CHOICE_VM", "Could not insert multiple-choice flashcard set: $it") }
+            .collect {
+                Log.d("MULTIPLE_CHOICE_VM", "Multiple-choice flashcard set inserted successfully")
+                _flashcardSets.value = _flashcardSets.value + flashcardSet
             }
     }
+
 
     fun deleteFlashcardSet(setId: Int) = viewModelScope.launch {
         multipleChoiceFlashcardStorage.delete(setId)
@@ -49,6 +45,14 @@ class CreateMultipleChoiceFlashcardViewModel(
             .collectLatest {
                 // Triggering a refresh after deleting
                 getFlashcardSets()
+            }
+    }
+
+    fun getFlashcardSets() = viewModelScope.launch {
+        multipleChoiceFlashcardStorage.getAll()
+            .catch { /* Handle the error appropriately */ }
+            .collectLatest { sets ->
+                _flashcardSets.value = sets
             }
     }
 

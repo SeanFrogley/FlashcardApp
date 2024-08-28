@@ -1,3 +1,6 @@
+package nz.ac.canterbury.seng303.myflashcardapp.screens
+
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,7 +30,10 @@ fun ViewFlashcardSetsScreen(
     navController: NavController,
     viewModel: ViewFlashcardSetsViewModel = koinViewModel()
 ) {
-    val flashcardSets by viewModel.flashcardSets.collectAsState()
+    val multipleChoiceFlashcardSets by viewModel.multipleChoiceFlashcardSets.collectAsState()
+    val traditionalFlashcardSets by viewModel.traditionalFlashcardSets.collectAsState()
+    Log.d("ViewFlashcardSetsScreen", "TraditionalFlashcardSets: $traditionalFlashcardSets")
+    Log.d("ViewFlashcardSetsScreen", "MultipleChoiceFlashcardSets: $multipleChoiceFlashcardSets")
 
     Scaffold(
         topBar = {
@@ -64,14 +70,28 @@ fun ViewFlashcardSetsScreen(
                         Icon(Icons.Default.Add, contentDescription = "Add Multiple Choice Set")
                     }
                 }
-
                 Spacer(modifier = Modifier.height(8.dp))
+            }
 
-                Text(
-                    text = "You have no Multiple Choice Sets yet",
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
+            if (multipleChoiceFlashcardSets.isEmpty()) {
+                item {
+                    Text(
+                        text = "You have no Multiple Choice Sets yet",
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+            } else {
+                items(multipleChoiceFlashcardSets) { flashcardSet ->
+                    FlashcardSetItem(
+                        title = flashcardSet.title,
+                        onPlayClick = {
+                            // Navigate to a screen to view/play the specific flashcard set
+                        }
+                    )
+                }
+            }
 
+            item {
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
@@ -93,11 +113,21 @@ fun ViewFlashcardSetsScreen(
                 }
             }
 
-            // Display flashcard sets in a list
-            items(flashcardSets) { flashcardSet ->
-                FlashcardSetItem(flashcardSet) {
-                    // Navigate to a screen to view/edit the specific flashcard set
-                    // Example: navController.navigate("flashcardSetDetail/${flashcardSet.id}")
+            if (traditionalFlashcardSets.isEmpty()) {
+                item {
+                    Text(
+                        text = "You have no Traditional Flashcard Sets yet",
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+            } else {
+                items(traditionalFlashcardSets) { flashcardSet ->
+                    FlashcardSetItem(
+                        title = flashcardSet.title,
+                        onPlayClick = {
+                            // Navigate to a screen to view/play the specific flashcard set
+                        }
+                    )
                 }
             }
         }
@@ -107,7 +137,7 @@ fun ViewFlashcardSetsScreen(
 
 @Composable
 fun FlashcardSetItem(
-    flashcardSet: TraditionalFlashcardSet,
+    title: String,
     onPlayClick: () -> Unit // Callback for the play button
 ) {
     Row(
@@ -118,7 +148,7 @@ fun FlashcardSetItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = flashcardSet.title)
+            Text(text = title)
             // Additional content can be added here
         }
         // Play Button

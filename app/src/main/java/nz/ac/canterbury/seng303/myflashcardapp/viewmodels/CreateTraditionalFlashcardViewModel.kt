@@ -25,8 +25,7 @@ class CreateTraditionalFlashcardViewModel(
     val selectedFlashcardSet: StateFlow<TraditionalFlashcardSet?> = _selectedFlashcardSet
 
     init {
-        // Automatically load flashcard sets when the ViewModel is initialized
-        loadFlashcardSets()
+        Log.d("CreateTraditionalFlashcardStorage", "Using traditionalFlashcardStorage: $traditionalFlashcardStorage")
     }
 
     private fun loadFlashcardSets() = viewModelScope.launch {

@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng303.myflashcardapp
 
 import CreateMultipleChoiceFlashcardSetScreen
 import CreateTraditionalFlashcardSetScreen
-import ViewFlashcardSetsScreen
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity

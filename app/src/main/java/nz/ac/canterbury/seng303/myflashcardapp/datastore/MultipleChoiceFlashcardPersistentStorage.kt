@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.myflashcardapp.datastore
 
+import android.util.Log
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -12,19 +13,25 @@ import nz.ac.canterbury.seng303.myflashcardapp.models.Identifiable
 import java.lang.reflect.Type
 
 
-class PersistentStorage<T>(
+class MultipleChoiceFlashcardPersistentStorage<T>(
     private val gson: Gson,
     private val type: Type,
     private val dataStore: DataStore<Preferences>,
     private val preferenceKey: Preferences.Key<String>
 ) : Storage<T> where T : Identifiable {
 
+    init {
+        Log.d("MultipleChoiceStorage", "Initialized with DataStore: ${dataStore.hashCode()} and Key: ${preferenceKey.name}")
+    }
+
     override fun insert(data: T): Flow<Int> = flow {
+        Log.d("MultipleChoiceStorage", "Inserting data into ${preferenceKey.name}: $data")
         val cachedDataClone = getAll().first().toMutableList()
         cachedDataClone.add(data)
-        dataStore.edit {
+        dataStore.edit { preferences ->
             val jsonString = gson.toJson(cachedDataClone, type)
-            it[preferenceKey] = jsonString
+            preferences[preferenceKey] = jsonString
+            Log.d("PersistentStorage", "DataStore after insertion: ${preferences[preferenceKey]}")
             emit(OPERATION_SUCCESS)
         }
     }
@@ -82,7 +89,7 @@ class PersistentStorage<T>(
 
     fun clear(): Flow<Unit> = flow {
         dataStore.edit { preferences ->
-            preferences.remove(preferenceKey)
+            preferences.clear() // This clears all data in the DataStore
         }
         emit(Unit)
     }
