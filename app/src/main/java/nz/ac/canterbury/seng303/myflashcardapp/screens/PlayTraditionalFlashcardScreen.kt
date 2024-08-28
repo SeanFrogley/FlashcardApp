@@ -207,7 +207,7 @@ fun PlayTraditionalFlashcardScreen(
                     }
                 } else {
                     navController.currentBackStackEntry?.savedStateHandle?.set("flashcardSet", flashcardSet)
-                    navController.navigate("traditional_results_screen")
+                    navController.navigate("navController.navigate(\"traditional_results_screen/${flashcardSet?.id}\")")
                 }
             } ?: run {
                 Text(text = "No flashcard set available", modifier = Modifier.align(Alignment.Center))

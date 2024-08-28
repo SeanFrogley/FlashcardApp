@@ -33,12 +33,11 @@ fun PlayMultipleChoiceFlashcardScreen(
     setId: Int,
     viewModel: PlayMultipleChoiceFlashcardViewModel = koinViewModel()
 ) {
-    // Load the flashcard set data
+
     LaunchedEffect(setId) {
         viewModel.loadFlashcardSet(setId)
     }
 
-    // Collect the flashcard set from the ViewModel
     val flashcardSet by viewModel.flashcardSet.collectAsState()
 
     var selectedOption by remember { mutableStateOf<MultipleChoiceOption?>(null) }
@@ -113,7 +112,7 @@ fun PlayMultipleChoiceFlashcardScreen(
                                 selectedOption = null
                             } else {
                                 navController.currentBackStackEntry?.savedStateHandle?.set("flashcardSet", flashcardSet)
-                                navController.navigate("multiple_choice_results_screen")
+                                navController.navigate("multiple_choice_results_screen/${flashcardSet?.id}")
                             }
                         },
                         enabled = selectedOption != null,

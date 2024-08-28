@@ -65,6 +65,11 @@ class MainActivity : ComponentActivity() {
                             ViewMultipleChoiceFlashcardScreen(navController, setId)
                         }
 
+                        composable("multiple_choice_results_screen/{setId}") { backStackEntry ->
+                            val setId = backStackEntry.arguments?.getString("setId")?.toIntOrNull() ?: return@composable
+                            MultipleChoiceResultsScreen(navController = navController, setId = setId)
+                        }
+
                     }
                 }
             }

@@ -21,6 +21,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,16 +32,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceFlashcardSet
+import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.MultipleChoiceResultsViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MultipleChoiceResultsScreen(
     navController: NavController,
-    modifier: Modifier = Modifier
+    setId: Int,
+    viewModel: MultipleChoiceResultsViewModel = koinViewModel()
 ) {
-    val flashcardSet = navController.previousBackStackEntry
-        ?.savedStateHandle
-        ?.get<MultipleChoiceFlashcardSet>("flashcardSet")
+    // Load the flashcard set data
+    LaunchedEffect(setId) {
+        viewModel.loadFlashcardSet(setId)
+    }
+
+    // Collect the flashcard set from the ViewModel
+    val flashcardSet by viewModel.flashcardSet.collectAsState()
 
     Scaffold(
         topBar = {
