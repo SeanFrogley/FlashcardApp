@@ -25,4 +25,18 @@ class ViewTraditionalFlashcardViewModel(
                 _flashcardSet.value = set
             }
     }
+
+    fun deleteFlashcard(setId: Int, index: Int) = viewModelScope.launch {
+        val currentSet = _flashcardSet.value ?: return@launch
+        traditionalFlashcardStorage.deleteFlashcardFromSet(setId, index).collect { result ->
+            if (result == 1) {
+                val updatedFlashcards = currentSet.flashcards.toMutableList().apply {
+                    removeAt(index)
+                }
+                _flashcardSet.value = currentSet.copy(flashcards = updatedFlashcards)
+            } else {
+                // Handle deletion failure
+            }
+        }
+    }
 }

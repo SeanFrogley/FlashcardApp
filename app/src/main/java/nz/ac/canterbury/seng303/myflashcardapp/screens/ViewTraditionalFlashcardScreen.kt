@@ -24,6 +24,7 @@ import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.ViewTraditionalFlashcardViewModel
 import org.koin.androidx.compose.koinViewModel
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ViewTraditionalFlashcardScreen(
@@ -35,6 +36,9 @@ fun ViewTraditionalFlashcardScreen(
 
     val flashcardSet by viewModel.flashcardSet.collectAsState()
     val context = LocalContext.current
+
+    var showDialog by remember { mutableStateOf(false) }
+    var deleteIndex by remember { mutableStateOf(-1) }
 
     LaunchedEffect(flashcardSet) {
         Log.d("PlayTraditionalFlashcardScreen", "Loaded Flashcard Set: $flashcardSet")
@@ -125,8 +129,8 @@ fun ViewTraditionalFlashcardScreen(
                         }
                         IconButton(
                             onClick = {
-                                Toast.makeText(context, "Deleted: ${flashcard.term}", Toast.LENGTH_SHORT).show()
-                                // viewModel.deleteFlashcard(setId, index)
+                                showDialog = true
+                                deleteIndex = index
                             }
                         ) {
                             Icon(Icons.Default.Delete, contentDescription = "Delete Term", tint = Color.Red)
@@ -137,4 +141,23 @@ fun ViewTraditionalFlashcardScreen(
             }
         }
     )
+
+    if (showDialog) {
+        ConfirmDeleteDialog(
+            onConfirm = {
+                val lastFlashcard = flashcardSet?.flashcards?.size == 1
+                viewModel.deleteFlashcard(setId, deleteIndex)
+                if (lastFlashcard) {
+                    Toast.makeText(context, "Deleted the last flashcard. The entire set has been removed.", Toast.LENGTH_SHORT).show()
+                    navController.navigate("view_flashcards") {
+                        popUpTo("view_flashcards") { inclusive = true }
+                    }
+                } else {
+                    Toast.makeText(context, "Deleted flashcard", Toast.LENGTH_SHORT).show()
+                }
+                showDialog = false
+            },
+            onDismiss = { showDialog = false }
+        )
+    }
 }

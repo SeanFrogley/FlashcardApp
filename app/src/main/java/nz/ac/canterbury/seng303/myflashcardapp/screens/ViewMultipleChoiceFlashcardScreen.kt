@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -33,6 +34,9 @@ fun ViewMultipleChoiceFlashcardScreen(
 
     val flashcardSet by viewModel.flashcardSet.collectAsState()
     val context = LocalContext.current
+
+    var showDialog by remember { mutableStateOf(false) }
+    var deleteIndex by remember { mutableStateOf(-1) }
 
     Scaffold(
         topBar = {
@@ -108,6 +112,14 @@ fun ViewMultipleChoiceFlashcardScreen(
                         ) {
                             Icon(Icons.Default.Search, contentDescription = "Search Question")
                         }
+                        IconButton(
+                            onClick = {
+                                showDialog = true
+                                deleteIndex = index
+                            }
+                        ) {
+                            Icon(Icons.Default.Delete, contentDescription = "Delete Question", tint = Color.Red)
+                        }
                     }
 
                     flashcard.options.forEachIndexed { optionIndex, option ->
@@ -122,4 +134,23 @@ fun ViewMultipleChoiceFlashcardScreen(
             }
         }
     )
+
+    if (showDialog) {
+        ConfirmDeleteDialog(
+            onConfirm = {
+                val lastFlashcard = flashcardSet?.flashcards?.size == 1
+                viewModel.deleteFlashcard(setId, deleteIndex)
+                if (lastFlashcard) {
+                    Toast.makeText(context, "Deleted the last flashcard. The entire set has been removed.", Toast.LENGTH_SHORT).show()
+                    navController.navigate("view_flashcards") {
+                        popUpTo("view_flashcards") { inclusive = true }
+                    }
+                } else {
+                    Toast.makeText(context, "Deleted flashcard", Toast.LENGTH_SHORT).show()
+                }
+                showDialog = false
+            },
+            onDismiss = { showDialog = false }
+        )
+    }
 }
