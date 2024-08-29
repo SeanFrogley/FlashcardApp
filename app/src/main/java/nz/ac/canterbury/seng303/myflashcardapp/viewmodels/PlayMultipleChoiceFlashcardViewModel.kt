@@ -22,7 +22,8 @@ class PlayMultipleChoiceFlashcardViewModel(
                 // Handle error
             }
             .collect { set ->
-                _flashcardSet.value = set
+                val shuffledSet = set.copy(flashcards = set.flashcards.shuffled())
+                _flashcardSet.value = shuffledSet
             }
     }
     fun updateSingleFlashcard(setId: Int, flashcardIndex: Int, gotCorrect: Boolean) = viewModelScope.launch {
