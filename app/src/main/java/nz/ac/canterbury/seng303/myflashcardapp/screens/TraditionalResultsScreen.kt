@@ -36,15 +36,16 @@ fun TraditionalResultsScreen(
     setId: Int,
     viewModel: TraditionalResultsViewModel = koinViewModel()
 ) {
-    // Load the flashcard set data
     LaunchedEffect(setId) {
         viewModel.loadFlashcardSet(setId)
     }
 
     val flashcardSet by viewModel.flashcardSet.collectAsState()
 
-    // Determine if not all flashcards were answered correctly
-    val notAllCorrect = flashcardSet?.flashcards?.any { it.gotCorrect == false } ?: false
+    val totalQuestions = flashcardSet?.flashcards?.size ?: 0
+    val correctAnswers = flashcardSet?.flashcards?.count { it.gotCorrect == true } ?: 0
+
+    val notAllCorrect = correctAnswers < totalQuestions
 
     Scaffold(
         topBar = {
@@ -83,6 +84,15 @@ fun TraditionalResultsScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.Start
             ) {
+                item {
+                    Text(
+                        text = "Your Score: $correctAnswers / $totalQuestions",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = 24.dp)
+                    )
+                }
+
                 item {
                     Text(
                         text = "Your Answers:",
@@ -126,7 +136,6 @@ fun TraditionalResultsScreen(
                     }
                 }
 
-                // If not all correct, show the Play Again button
                 if (notAllCorrect) {
                     item {
                         Spacer(modifier = Modifier.height(24.dp))
