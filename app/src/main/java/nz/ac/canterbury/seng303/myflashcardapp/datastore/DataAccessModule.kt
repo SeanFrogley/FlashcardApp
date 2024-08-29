@@ -12,6 +12,8 @@ import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceFlashcardSet
 import nz.ac.canterbury.seng303.myflashcardapp.models.TraditionalFlashcardSet
 import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.CreateMultipleChoiceFlashcardViewModel
 import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.CreateTraditionalFlashcardViewModel
+import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.EditMultipleChoiceFlashcardViewModel
+import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.EditTraditionalFlashcardViewModel
 import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.MultipleChoiceResultsViewModel
 import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.PlayFlashcardSetsViewModel
 import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.PlayMultipleChoiceFlashcardViewModel
@@ -57,60 +59,61 @@ val dataAccessModule = module {
             traditionalFlashcardStorage = get(named("traditionalStorage"))
         )
     }
-
     viewModel {
         CreateMultipleChoiceFlashcardViewModel(
             multipleChoiceFlashcardStorage = get(named("multipleChoiceStorage"))
         )
     }
-
     viewModel {
         ViewFlashcardSetsViewModel(
             traditionalFlashcardStorage = get(named("traditionalStorage")),
             multipleChoiceFlashcardStorage = get(named("multipleChoiceStorage"))
         )
     }
-
     viewModel {
         PlayFlashcardSetsViewModel(
             traditionalFlashcardStorage = get(named("traditionalStorage")),
             multipleChoiceFlashcardStorage = get(named("multipleChoiceStorage"))
         )
     }
-
     viewModel {
         ViewTraditionalFlashcardViewModel(
             traditionalFlashcardStorage = get(named("traditionalStorage"))
         )
     }
-
     viewModel {
         ViewMultipleChoiceFlashcardViewModel(
             multipleChoiceFlashcardPersistentStorage = get(named("multipleChoiceStorage"))
         )
     }
-
     viewModel {
         PlayTraditionalFlashcardViewModel(
             traditionalFlashcardStorage = get(named("traditionalStorage"))
         )
     }
-
     viewModel {
         PlayMultipleChoiceFlashcardViewModel(
             multipleChoiceFlashcardStorage = get(named("multipleChoiceStorage"))
         )
     }
-
     viewModel {
         MultipleChoiceResultsViewModel(
             multipleChoiceFlashcardStorage = get(named("multipleChoiceStorage"))
         )
     }
-
     viewModel {
         TraditionalResultsViewModel(
             traditionalFlashcardStorage = get(named("traditionalStorage"))
+        )
+    }
+    viewModel {
+        EditTraditionalFlashcardViewModel(
+            traditionalFlashcardStorage = get(named("traditionalStorage"))
+        )
+    }
+    viewModel {
+        EditMultipleChoiceFlashcardViewModel(
+            multipleChoiceFlashcardStorage = get(named("multipleChoiceStorage"))
         )
     }
 

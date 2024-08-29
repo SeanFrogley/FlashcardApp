@@ -59,6 +59,15 @@ class MainActivity : ComponentActivity() {
                         composable("create_traditional_flashcard_screen") {
                             CreateTraditionalFlashcardSetScreen(navController)
                         }
+
+                        composable("edit_traditional_flashcard_screen/{setId}") { backStackEntry ->
+                            val setId = backStackEntry.arguments?.getString("setId")?.toIntOrNull() ?: return@composable
+                            EditTraditionalFlashcardSetScreen(navController, setId)
+                        }
+                        composable("edit_multiple_choice_flashcard_screen/{setId}") { backStackEntry ->
+                            val setId = backStackEntry.arguments?.getString("setId")?.toIntOrNull() ?: return@composable
+                            EditMultipleChoiceFlashcardSetScreen(navController = navController, setId = setId)
+                        }
                         composable("view_traditional_flashcard_screen/{setId}") { backStackEntry ->
                             val setId = backStackEntry.arguments?.getString("setId")?.toIntOrNull() ?: return@composable
                             ViewTraditionalFlashcardScreen(navController, setId)
