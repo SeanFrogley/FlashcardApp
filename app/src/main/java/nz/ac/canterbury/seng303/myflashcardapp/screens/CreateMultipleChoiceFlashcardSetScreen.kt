@@ -183,6 +183,13 @@ fun CreateMultipleChoiceFlashcardSetScreen(
                                 selectedOptionIndices = selectedOptionIndices.toMutableList().apply {
                                     this[flashcardIndex] = optionIndex
                                 }
+                                flashcards = flashcards.toMutableList().apply {
+                                    this[flashcardIndex] = flashcard.copy(
+                                        options = flashcard.options.mapIndexed { i, opt ->
+                                            opt.copy(isCorrect = i == optionIndex)
+                                        }.toMutableList()
+                                    )
+                                }
                             }
                         )
                     }
@@ -235,7 +242,6 @@ fun validateFlashcards(
 
     return hasErrors
 }
-
 
 fun openWebSearch(context: android.content.Context, query: String) {
     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=$query"))

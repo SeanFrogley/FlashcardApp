@@ -25,4 +25,15 @@ class PlayMultipleChoiceFlashcardViewModel(
                 _flashcardSet.value = set
             }
     }
+    fun updateSingleFlashcard(setId: Int, flashcardIndex: Int, gotCorrect: Boolean) = viewModelScope.launch {
+        val currentSet = _flashcardSet.value ?: return@launch
+        val updatedFlashcards = currentSet.flashcards.toMutableList()
+        val updatedFlashcard = updatedFlashcards[flashcardIndex].copy(gotCorrect = gotCorrect)
+        updatedFlashcards[flashcardIndex] = updatedFlashcard
+
+        val updatedSet = currentSet.copy(flashcards = updatedFlashcards)
+        multipleChoiceFlashcardStorage.edit(setId, updatedSet).collect {
+            _flashcardSet.value = updatedSet
+        }
+    }
 }

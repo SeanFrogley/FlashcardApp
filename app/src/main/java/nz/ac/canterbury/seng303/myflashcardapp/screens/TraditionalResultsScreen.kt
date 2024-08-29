@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.myflashcardapp.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -54,10 +55,27 @@ fun TraditionalResultsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Results") },
+                modifier = Modifier.height(80.dp),
+                title = {
+                    Text(
+                        text = "Results",
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = {
+                        navController.navigate("play_flashcards_screen")
+                    }) {
                         Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        navController.navigate("play_flashcards_screen")
+                    }) {
+                        Icon(Icons.Default.Check, contentDescription = "Check")
                     }
                 }
             )

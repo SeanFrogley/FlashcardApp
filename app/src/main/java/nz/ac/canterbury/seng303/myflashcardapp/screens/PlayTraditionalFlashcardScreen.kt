@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.myflashcardapp.screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -68,12 +69,18 @@ fun PlayTraditionalFlashcardScreen(
             showAnswer = false
         } else {
             navController.currentBackStackEntry?.savedStateHandle?.set("flashcardSet", flashcardSet)
-            navController.navigate("traditional_results_screen/${flashcardSet?.id}")
+            navController.navigate("traditional_results_screen/${setId}") {
+                popUpTo("play_traditional_flashcard_screen") { inclusive = true }
+            }
         }
     }
 
     fun markFlashcardAsCorrect(isCorrect: Boolean) {
-        flashcardSet?.flashcards?.getOrNull(currentIndex)?.gotCorrect = isCorrect
+        flashcardSet?.flashcards?.getOrNull(currentIndex)?.let { flashcard ->
+            // Update the gotCorrect attribute
+            val updatedFlashcard = flashcard.copy(gotCorrect = isCorrect)
+            viewModel.updateFlashcard(setId, currentIndex, updatedFlashcard) // Updated to use index
+        }
         Toast.makeText(
             context,
             if (isCorrect) "Correct!" else "Incorrect!",
@@ -206,8 +213,9 @@ fun PlayTraditionalFlashcardScreen(
                         }
                     }
                 } else {
-                    navController.currentBackStackEntry?.savedStateHandle?.set("flashcardSet", flashcardSet)
-                    navController.navigate("traditional_results_screen")
+                    navController.navigate("traditional_results_screen/$setId") {
+                        popUpTo("play_traditional_flashcard_screen") { inclusive = true }
+                    }
                 }
             } ?: run {
                 Text(text = "No flashcard set available", modifier = Modifier.align(Alignment.Center))

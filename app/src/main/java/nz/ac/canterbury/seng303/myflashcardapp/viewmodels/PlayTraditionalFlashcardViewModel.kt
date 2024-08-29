@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.myflashcardapp.datastore.Storage
+import nz.ac.canterbury.seng303.myflashcardapp.models.TraditionalFlashcard
 import nz.ac.canterbury.seng303.myflashcardapp.models.TraditionalFlashcardSet
 
 class PlayTraditionalFlashcardViewModel(
@@ -25,4 +26,19 @@ class PlayTraditionalFlashcardViewModel(
                 _flashcardSet.value = set
             }
     }
+    fun updateFlashcard(setId: Int, index: Int, updatedFlashcard: TraditionalFlashcard) = viewModelScope.launch {
+        val currentSet = _flashcardSet.value ?: return@launch
+        if (index !in currentSet.flashcards.indices) return@launch // Safety check for valid index
+
+        // Replace the flashcard at the specific index with the updated flashcard
+        val updatedFlashcards = currentSet.flashcards.toMutableList().apply {
+            this[index] = updatedFlashcard
+        }
+
+        val updatedSet = currentSet.copy(flashcards = updatedFlashcards)
+        traditionalFlashcardStorage.edit(setId, updatedSet).collect {
+            _flashcardSet.value = updatedSet
+        }
+    }
+
 }

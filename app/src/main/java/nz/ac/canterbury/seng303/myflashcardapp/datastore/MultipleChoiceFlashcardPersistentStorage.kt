@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.myflashcardapp.datastore
 
+import android.util.Log
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -27,6 +28,10 @@ class MultipleChoiceFlashcardPersistentStorage<T>(
         cachedDataClone.add(data)
         dataStore.edit { preferences ->
             val jsonString = gson.toJson(cachedDataClone, type)
+
+            // Log the JSON representation of the data being inserted
+            Log.d("DataStoreInsert", "Inserting set: $jsonString")
+
             preferences[preferenceKey] = jsonString
             emit(OPERATION_SUCCESS)
         }

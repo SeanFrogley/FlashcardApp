@@ -33,7 +33,6 @@ fun PlayMultipleChoiceFlashcardScreen(
     setId: Int,
     viewModel: PlayMultipleChoiceFlashcardViewModel = koinViewModel()
 ) {
-
     LaunchedEffect(setId) {
         viewModel.loadFlashcardSet(setId)
     }
@@ -99,7 +98,9 @@ fun PlayMultipleChoiceFlashcardScreen(
                     Button(
                         onClick = {
                             val isCorrect = selectedOption?.isCorrect == true
-                            flashcardSet?.flashcards?.getOrNull(currentQuestionIndex)?.gotCorrect = isCorrect
+                            flashcardSet?.let {
+                                viewModel.updateSingleFlashcard(setId, currentQuestionIndex, isCorrect)
+                            }
 
                             Toast.makeText(
                                 context,
@@ -116,7 +117,9 @@ fun PlayMultipleChoiceFlashcardScreen(
                             }
                         },
                         enabled = selectedOption != null,
-                        modifier = Modifier.fillMaxWidth().padding(16.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
                     ) {
                         Text("Submit")
                     }

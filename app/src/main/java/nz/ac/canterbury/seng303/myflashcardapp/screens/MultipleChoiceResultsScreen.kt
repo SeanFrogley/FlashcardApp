@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.myflashcardapp.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -63,12 +64,16 @@ fun MultipleChoiceResultsScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = {
+                        navController.navigate("play_flashcards_screen")
+                    }) {
                         Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Back")
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* No functionality yet */ }) {
+                    IconButton(onClick = {
+                        navController.navigate("play_flashcards_screen")
+                    }) {
                         Icon(Icons.Default.Check, contentDescription = "Check")
                     }
                 }

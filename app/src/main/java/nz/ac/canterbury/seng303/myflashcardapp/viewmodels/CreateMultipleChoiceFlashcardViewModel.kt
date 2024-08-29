@@ -29,7 +29,7 @@ class CreateMultipleChoiceFlashcardViewModel(
             title = title,
             flashcards = flashcards
         )
-
+        Log.d("DataStoreInsert", "Inserting set: $flashcards")
         multipleChoiceFlashcardStorage.insert(flashcardSet)
             .catch { Log.e("MULTIPLE_CHOICE_VM", "Could not insert multiple-choice flashcard set: $it") }
             .collect {
