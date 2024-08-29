@@ -10,7 +10,7 @@ import nz.ac.canterbury.seng303.myflashcardapp.datastore.Storage
 import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceFlashcardSet
 import nz.ac.canterbury.seng303.myflashcardapp.models.TraditionalFlashcardSet
 
-class ViewFlashcardSetsViewModel(
+class PlayFlashcardSetsViewModel(
     private val traditionalFlashcardStorage: Storage<TraditionalFlashcardSet>,
     private val multipleChoiceFlashcardStorage: Storage<MultipleChoiceFlashcardSet>
 ) : ViewModel() {
@@ -39,22 +39,6 @@ class ViewFlashcardSetsViewModel(
             .catch { e -> /* Handle error */ }
             .collect { sets ->
                 _multipleChoiceFlashcardSets.emit(sets)
-            }
-    }
-
-    fun deleteTraditionalFlashcardSet(setId: Int) = viewModelScope.launch {
-        traditionalFlashcardStorage.delete(setId)
-            .catch { /* Handle error */ }
-            .collect {
-                loadTraditionalFlashcardSets() // Reload sets after deletion
-            }
-    }
-
-    fun deleteMultipleChoiceFlashcardSet(setId: Int) = viewModelScope.launch {
-        multipleChoiceFlashcardStorage.delete(setId)
-            .catch { /* Handle error */ }
-            .collect {
-                loadMultipleChoiceFlashcardSets()
             }
     }
 }

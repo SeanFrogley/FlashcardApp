@@ -1,8 +1,6 @@
 package nz.ac.canterbury.seng303.myflashcardapp
 
 import CreateMultipleChoiceFlashcardSetScreen
-import CreateTraditionalFlashcardSetScreen
-import ViewFlashcardSetsScreen
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -44,23 +42,49 @@ class MainActivity : ComponentActivity() {
                         composable("view_flashcards") {
                             ViewFlashcardSetsScreen(navController)
                         }
-                        composable("play_multiple_choice_flashcard_screen") {
-                            PlayMultipleChoiceFlashcardScreen(navController = navController)
+                        composable("play_flashcards_screen") {
+                            PlayFlashcardSetScreen(navController)
                         }
-                        composable("play_traditional_flashcard_screen") {
-                            PlayTraditionalFlashcardScreen(navController = navController)
+                        composable("play_multiple_choice_flashcard_screen/{setId}") { backStackEntry ->
+                            val setId = backStackEntry.arguments?.getString("setId")?.toIntOrNull() ?: return@composable
+                            PlayMultipleChoiceFlashcardScreen(navController, setId)
                         }
-                        composable("multiple_choice_results_screen") {
-                            MultipleChoiceResultsScreen(navController = navController)
-                        }
-                        composable("traditional_results_screen") {
-                            TraditionalResultsScreen(navController = navController)
+                        composable("play_traditional_flashcard_screen/{setId}") { backStackEntry ->
+                            val setId = backStackEntry.arguments?.getString("setId")?.toIntOrNull() ?: return@composable
+                            PlayTraditionalFlashcardScreen(navController, setId)
                         }
                         composable("create_multiple_choice_flashcard_screen") {
                             CreateMultipleChoiceFlashcardSetScreen(navController)
                         }
                         composable("create_traditional_flashcard_screen") {
                             CreateTraditionalFlashcardSetScreen(navController)
+                        }
+
+                        composable("edit_traditional_flashcard_screen/{setId}") { backStackEntry ->
+                            val setId = backStackEntry.arguments?.getString("setId")?.toIntOrNull() ?: return@composable
+                            EditTraditionalFlashcardSetScreen(navController, setId)
+                        }
+                        composable("edit_multiple_choice_flashcard_screen/{setId}") { backStackEntry ->
+                            val setId = backStackEntry.arguments?.getString("setId")?.toIntOrNull() ?: return@composable
+                            EditMultipleChoiceFlashcardSetScreen(navController = navController, setId = setId)
+                        }
+                        composable("view_traditional_flashcard_screen/{setId}") { backStackEntry ->
+                            val setId = backStackEntry.arguments?.getString("setId")?.toIntOrNull() ?: return@composable
+                            ViewTraditionalFlashcardScreen(navController, setId)
+                        }
+                        composable("view_multiple_choice_flashcard_screen/{setId}") { backStackEntry ->
+                            val setId = backStackEntry.arguments?.getString("setId")?.toIntOrNull() ?: return@composable
+                            ViewMultipleChoiceFlashcardScreen(navController, setId)
+                        }
+
+                        composable("multiple_choice_results_screen/{setId}") { backStackEntry ->
+                            val setId = backStackEntry.arguments?.getString("setId")?.toIntOrNull() ?: return@composable
+                            MultipleChoiceResultsScreen(navController = navController, setId = setId)
+                        }
+
+                        composable("traditional_results_screen/{setId}") { backStackEntry ->
+                            val setId = backStackEntry.arguments?.getString("setId")?.toIntOrNull() ?: return@composable
+                            TraditionalResultsScreen(navController = navController, setId = setId)
                         }
 
                     }

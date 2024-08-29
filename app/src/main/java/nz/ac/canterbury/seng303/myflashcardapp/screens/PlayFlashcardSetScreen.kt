@@ -6,11 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -28,14 +26,13 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
+import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.PlayFlashcardSetsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ViewFlashcardSetsScreen(
+fun PlayFlashcardSetScreen(
     navController: NavController,
-    viewModel: ViewFlashcardSetsViewModel = koinViewModel()
+    viewModel: PlayFlashcardSetsViewModel = koinViewModel()
 ) {
     val multipleChoiceFlashcardSets by viewModel.multipleChoiceFlashcardSets.collectAsState()
     val traditionalFlashcardSets by viewModel.traditionalFlashcardSets.collectAsState()
@@ -43,33 +40,12 @@ fun ViewFlashcardSetsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                modifier = Modifier.height(80.dp),
-                title = {
-                    Text(
-                        text = "View Sets",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                    )
-                },
+                title = { Text("Play Flashcard Sets") },
                 navigationIcon = {
                     IconButton(onClick = {
                         navController.navigate("main_screen")
                     }) {
-                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Back")
-                    }
-                },
-                actions = {
-                    IconButton(
-                        onClick = { /* do nothing this button is just to center the text */ },
-                        enabled = false,
-                        modifier = Modifier.alpha(0.3f)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = "Check",
-                            tint = Color.Transparent
-                        )
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -81,7 +57,6 @@ fun ViewFlashcardSetsScreen(
                 .padding(16.dp)
                 .fillMaxSize()
         ) {
-            // Multiple Choice Flashcard Sets Section
             item {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -111,12 +86,8 @@ fun ViewFlashcardSetsScreen(
                 items(multipleChoiceFlashcardSets) { flashcardSet ->
                     FlashcardSetItem(
                         title = flashcardSet.title,
-                        onEditClick = {
-                            navController.navigate("edit_multiple_choice_flashcard_screen/${flashcardSet.id}")
-                        },
-                        onDeleteClick = { viewModel.deleteMultipleChoiceFlashcardSet(flashcardSet.id) },
-                        onViewClick = {
-                            navController.navigate("view_multiple_choice_flashcard_screen/${flashcardSet.id}")
+                        onPlayClick = {
+                            navController.navigate("play_multiple_choice_flashcard_screen/${flashcardSet.id}")
                         }
                     )
                 }
@@ -126,7 +97,6 @@ fun ViewFlashcardSetsScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // Traditional Flashcard Sets Section
             item {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -155,12 +125,8 @@ fun ViewFlashcardSetsScreen(
                 items(traditionalFlashcardSets) { flashcardSet ->
                     FlashcardSetItem(
                         title = flashcardSet.title,
-                        onEditClick = {
-                            navController.navigate("edit_traditional_flashcard_screen/${flashcardSet.id}")
-                        },
-                        onDeleteClick = { viewModel.deleteTraditionalFlashcardSet(flashcardSet.id) },
-                        onViewClick = {
-                            navController.navigate("view_traditional_flashcard_screen/${flashcardSet.id}")
+                        onPlayClick = {
+                            navController.navigate("play_traditional_flashcard_screen/${flashcardSet.id}")
                         }
                     )
                 }
@@ -169,17 +135,11 @@ fun ViewFlashcardSetsScreen(
     }
 }
 
-
-
-
 @Composable
 fun FlashcardSetItem(
     title: String,
-    onEditClick: () -> Unit,
-    onDeleteClick: () -> Unit,
-    onViewClick: () -> Unit
+    onPlayClick: () -> Unit,
 ) {
-    var showDialog by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
@@ -191,58 +151,13 @@ fun FlashcardSetItem(
         Column(modifier = Modifier.weight(1f)) {
             Text(text = title)
         }
-        // Edit Button
-        IconButton(onClick = onEditClick) {
-            Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Set")
+        // Play Button
+        IconButton(onClick = onPlayClick) {
+            Icon(imageVector = Icons.Default.PlayArrow, contentDescription = "Play Set")
         }
-        // Delete Button
-        IconButton(onClick = { showDialog = true }) {
-            Icon(imageVector = Icons.Default.Delete, tint = Color.Red, contentDescription = "Delete Set")
-        }
-        // View Button
-        IconButton(onClick = onViewClick) {
-            Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "View Set")
-        }
-    }
-
-    if (showDialog) {
-        ConfirmDeleteDialog(
-            onConfirm = onDeleteClick,
-            onDismiss = { showDialog = false }
-        )
     }
 }
 
 
 
 
-@Composable
-fun ConfirmDeleteDialog(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(text = "Confirm Deletion")
-        },
-        text = {
-            Text("Are you sure you want to delete this flashcard set? This action cannot be undone.")
-        },
-        confirmButton = {
-            Button(
-                onClick = {
-                    onConfirm()
-                    onDismiss()
-                }
-            ) {
-                Text("Delete")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    )
-}

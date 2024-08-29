@@ -1,3 +1,5 @@
+package nz.ac.canterbury.seng303.myflashcardapp.screens
+
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
@@ -17,30 +19,49 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import generateNewFlashcard
 import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceOption
 import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceFlashcard
-import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.CreateMultipleChoiceFlashcardViewModel
+import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.EditMultipleChoiceFlashcardViewModel
 import org.koin.androidx.compose.koinViewModel
+import validateFlashcards
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateMultipleChoiceFlashcardSetScreen(
+fun EditMultipleChoiceFlashcardSetScreen(
     navController: NavController,
-    viewModel: CreateMultipleChoiceFlashcardViewModel = koinViewModel()
+    setId: Int,
+    viewModel: EditMultipleChoiceFlashcardViewModel = koinViewModel()
 ) {
     var title by rememberSaveable { mutableStateOf("") }
-    var flashcards by rememberSaveable { mutableStateOf(mutableListOf(generateNewFlashcard())) }
-    var selectedOptionIndices by rememberSaveable { mutableStateOf(mutableListOf(-1)) }
+    var flashcards by rememberSaveable { mutableStateOf(mutableListOf<MultipleChoiceFlashcard>()) }
+    var selectedOptionIndices by rememberSaveable { mutableStateOf(mutableListOf<Int>()) }
     var hasAttemptedSave by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
+
+    LaunchedEffect(setId) {
+        viewModel.loadFlashcardSet(setId)
+    }
+
+    val flashcardSet by viewModel.flashcardSet.collectAsState()
+
+    LaunchedEffect(flashcardSet) {
+        flashcardSet?.let { set ->
+            title = set.title
+            flashcards = set.flashcards.toMutableList()
+            selectedOptionIndices = set.flashcards.map { flashcard ->
+                flashcard.options.indexOfFirst { it.isCorrect }.takeIf { it >= 0 } ?: 0
+            }.toMutableList()
+        }
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Create Flashcard Set") },
+                title = { Text("Edit Flashcard Set") },
                 navigationIcon = {
                     IconButton(onClick = {
-                        navController.navigate("choose_flashcard_style")
+                        navController.popBackStack()
                     }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
@@ -58,9 +79,9 @@ fun CreateMultipleChoiceFlashcardSetScreen(
                                 Toast.makeText(context, "Please correct the errors in the flashcards", Toast.LENGTH_SHORT).show()
                             }
                             else -> {
-                                viewModel.saveMultipleChoiceFlashcardSet(title, flashcards)
+                                viewModel.updateMultipleChoiceFlashcardSet(setId, title, flashcards)
                                 navController.navigate("view_flashcards") {
-                                    popUpTo("create_multiple_choice_flashcard_screen") { inclusive = true }
+                                    popUpTo("edit_multiple_choice_flashcard_screen") { inclusive = true }
                                 }
                             }
                         }
@@ -183,13 +204,6 @@ fun CreateMultipleChoiceFlashcardSetScreen(
                                 selectedOptionIndices = selectedOptionIndices.toMutableList().apply {
                                     this[flashcardIndex] = optionIndex
                                 }
-                                flashcards = flashcards.toMutableList().apply {
-                                    this[flashcardIndex] = flashcard.copy(
-                                        options = flashcard.options.mapIndexed { i, opt ->
-                                            opt.copy(isCorrect = i == optionIndex)
-                                        }.toMutableList()
-                                    )
-                                }
                             }
                         )
                     }
@@ -202,48 +216,3 @@ fun CreateMultipleChoiceFlashcardSetScreen(
     }
 }
 
-fun generateNewFlashcard(): MultipleChoiceFlashcard {
-    return MultipleChoiceFlashcard(
-        id = 0,
-        question = "",
-        options = generateDefaultOptions(4)
-    )
-}
-
-fun generateDefaultOptions(size: Int): MutableList<MultipleChoiceOption> {
-    return MutableList(size) { MultipleChoiceOption("", false) }
-}
-
-fun validateFlashcards(
-    flashcards: List<MultipleChoiceFlashcard>,
-    selectedOptionIndices: List<Int>
-): Boolean {
-    var hasErrors = false
-
-    flashcards.forEachIndexed { index, flashcard ->
-        if (flashcard.question.isBlank()) {
-            hasErrors = true
-        }
-
-        if (flashcard.options.size !in 2..4) {
-            hasErrors = true
-        }
-
-        flashcard.options.forEach { option ->
-            if (option.text.isBlank()) {
-                hasErrors = true
-            }
-        }
-
-        if (selectedOptionIndices[index] == -1) {
-            hasErrors = true
-        }
-    }
-
-    return hasErrors
-}
-
-fun openWebSearch(context: android.content.Context, query: String) {
-    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=$query"))
-    context.startActivity(intent)
-}

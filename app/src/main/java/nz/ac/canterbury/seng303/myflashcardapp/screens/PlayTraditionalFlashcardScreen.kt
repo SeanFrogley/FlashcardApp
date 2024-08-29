@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.myflashcardapp.screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +25,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -38,16 +41,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.myflashcardapp.models.TraditionalFlashcardSet
+import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.PlayTraditionalFlashcardViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayTraditionalFlashcardScreen(
     navController: NavController,
-    modifier: Modifier = Modifier
+    setId: Int,
+    viewModel: PlayTraditionalFlashcardViewModel = koinViewModel()
 ) {
-    val flashcardSet = navController.previousBackStackEntry
-        ?.savedStateHandle
-        ?.get<TraditionalFlashcardSet>("flashcardSet")
+    viewModel.loadFlashcardSet(setId)
+
+    val flashcardSet by viewModel.flashcardSet.collectAsState()
 
     var showAnswer by remember { mutableStateOf(false) }
     var currentIndex by remember { mutableIntStateOf(0) }
@@ -61,12 +67,17 @@ fun PlayTraditionalFlashcardScreen(
             showAnswer = false
         } else {
             navController.currentBackStackEntry?.savedStateHandle?.set("flashcardSet", flashcardSet)
-            navController.navigate("traditional_results_screen")
+            navController.navigate("traditional_results_screen/${setId}") {
+                popUpTo("play_traditional_flashcard_screen") { inclusive = true }
+            }
         }
     }
 
     fun markFlashcardAsCorrect(isCorrect: Boolean) {
-        flashcardSet?.flashcards?.getOrNull(currentIndex)?.gotCorrect = isCorrect
+        flashcardSet?.flashcards?.getOrNull(currentIndex)?.let { flashcard ->
+            val updatedFlashcard = flashcard.copy(gotCorrect = isCorrect)
+            viewModel.updateFlashcard(setId, currentIndex, updatedFlashcard) // Updated to use index
+        }
         Toast.makeText(
             context,
             if (isCorrect) "Correct!" else "Incorrect!",
@@ -137,7 +148,9 @@ fun PlayTraditionalFlashcardScreen(
                                 onClick = {
                                     markFlashcardAsCorrect(false)
                                 },
-                                modifier = Modifier.weight(1f).padding(8.dp)
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(8.dp)
                             ) {
                                 Text(text = "Wrong")
                             }
@@ -145,7 +158,9 @@ fun PlayTraditionalFlashcardScreen(
                                 onClick = {
                                     markFlashcardAsCorrect(true)
                                 },
-                                modifier = Modifier.weight(1f).padding(8.dp)
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(8.dp)
                             ) {
                                 Text(text = "Right")
                             }
@@ -153,7 +168,9 @@ fun PlayTraditionalFlashcardScreen(
                     } else {
                         Button(
                             onClick = { showAnswer = true },
-                            modifier = Modifier.fillMaxWidth().padding(16.dp)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
                         ) {
                             Text(text = "Show Answer")
                         }
@@ -193,8 +210,9 @@ fun PlayTraditionalFlashcardScreen(
                         }
                     }
                 } else {
-                    navController.currentBackStackEntry?.savedStateHandle?.set("flashcardSet", flashcardSet)
-                    navController.navigate("traditional_results_screen")
+                    navController.navigate("traditional_results_screen/$setId") {
+                        popUpTo("play_traditional_flashcard_screen") { inclusive = true }
+                    }
                 }
             } ?: run {
                 Text(text = "No flashcard set available", modifier = Modifier.align(Alignment.Center))

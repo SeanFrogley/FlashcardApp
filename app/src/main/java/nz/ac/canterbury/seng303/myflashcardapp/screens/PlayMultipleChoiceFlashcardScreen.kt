@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng303.myflashcardapp.screens
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,15 +22,22 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceFlashcardSet
 import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceOption
+import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.PlayMultipleChoiceFlashcardViewModel
+import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.PlayTraditionalFlashcardViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayMultipleChoiceFlashcardScreen(
     navController: NavController,
-    modifier: Modifier = Modifier
+    setId: Int,
+    viewModel: PlayMultipleChoiceFlashcardViewModel = koinViewModel()
 ) {
-    val flashcardSet = navController.previousBackStackEntry
-        ?.savedStateHandle?.get<MultipleChoiceFlashcardSet>("flashcardSet")
+    LaunchedEffect(setId) {
+        viewModel.loadFlashcardSet(setId)
+    }
+
+    val flashcardSet by viewModel.flashcardSet.collectAsState()
 
     var selectedOption by remember { mutableStateOf<MultipleChoiceOption?>(null) }
     var currentQuestionIndex by remember { mutableIntStateOf(0) }
@@ -92,7 +98,9 @@ fun PlayMultipleChoiceFlashcardScreen(
                     Button(
                         onClick = {
                             val isCorrect = selectedOption?.isCorrect == true
-                            flashcardSet?.flashcards?.getOrNull(currentQuestionIndex)?.gotCorrect = isCorrect
+                            flashcardSet?.let {
+                                viewModel.updateSingleFlashcard(setId, currentQuestionIndex, isCorrect)
+                            }
 
                             Toast.makeText(
                                 context,
@@ -105,11 +113,13 @@ fun PlayMultipleChoiceFlashcardScreen(
                                 selectedOption = null
                             } else {
                                 navController.currentBackStackEntry?.savedStateHandle?.set("flashcardSet", flashcardSet)
-                                navController.navigate("multiple_choice_results_screen")
+                                navController.navigate("multiple_choice_results_screen/${flashcardSet?.id}")
                             }
                         },
                         enabled = selectedOption != null,
-                        modifier = Modifier.fillMaxWidth().padding(16.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
                     ) {
                         Text("Submit")
                     }
@@ -128,14 +138,14 @@ fun PlayMultipleChoiceFlashcardScreen(
             ) {
                 item {
                     Text(
-                        text = flashcardSet.flashcards[currentQuestionIndex].question,
+                        text = flashcardSet!!.flashcards[currentQuestionIndex].question,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 24.dp)
                     )
                 }
 
-                items(flashcardSet.flashcards[currentQuestionIndex].options) { option ->
+                items(flashcardSet!!.flashcards[currentQuestionIndex].options) { option ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()

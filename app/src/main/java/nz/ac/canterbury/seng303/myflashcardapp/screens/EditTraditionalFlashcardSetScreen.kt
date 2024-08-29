@@ -1,7 +1,5 @@
 package nz.ac.canterbury.seng303.myflashcardapp.screens
 
-import android.content.Intent
-import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -26,27 +24,41 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.myflashcardapp.models.TraditionalFlashcard
-import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.CreateTraditionalFlashcardViewModel
+import nz.ac.canterbury.seng303.myflashcardapp.viewmodels.EditTraditionalFlashcardViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateTraditionalFlashcardSetScreen(
+fun EditTraditionalFlashcardSetScreen(
     navController: NavController,
-    viewModel: CreateTraditionalFlashcardViewModel = koinViewModel()
+    setId: Int,
+    viewModel: EditTraditionalFlashcardViewModel = koinViewModel()
 ) {
     var title by rememberSaveable { mutableStateOf("") }
     var flashcards by rememberSaveable { mutableStateOf(listOf(TraditionalFlashcard(0, "", ""))) }
     var hasAttemptedSave by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
 
+    LaunchedEffect(setId) {
+        viewModel.loadFlashcardSet(setId)
+    }
+
+    val flashcardSet by viewModel.flashcardSet.collectAsState()
+
+    LaunchedEffect(flashcardSet) {
+        flashcardSet?.let {
+            title = it.title
+            flashcards = it.flashcards
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Create Flashcard Set") },
+                title = { Text("Edit Flashcard Set") },
                 navigationIcon = {
                     IconButton(onClick = {
-                        navController.navigate("choose_flashcard_style")
+                        navController.navigate("view_flashcards")
                     }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
@@ -62,9 +74,9 @@ fun CreateTraditionalFlashcardSetScreen(
                                 Toast.makeText(context, "All terms and definitions must be filled out", Toast.LENGTH_SHORT).show()
                             }
                             else -> {
-                                viewModel.saveFlashcardSet(title, flashcards)
+                                viewModel.updateFlashcardSet(setId, title, flashcards)
                                 navController.navigate("view_flashcards") {
-                                    popUpTo("createFlashcardSet") { inclusive = true }
+                                    popUpTo("editFlashcardSet") { inclusive = true }
                                 }
                             }
                         }
@@ -132,67 +144,3 @@ fun CreateTraditionalFlashcardSetScreen(
     }
 }
 
-@Composable
-fun FlashcardInput(
-    flashcard: TraditionalFlashcard,
-    onRemove: () -> Unit,
-    onTermChange: (String) -> Unit,
-    onDefinitionChange: (String) -> Unit,
-    showError: Boolean
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        val context = LocalContext.current
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(8.dp)
-        ) {
-            IconButton(
-                onClick = {
-                    if (flashcard.term.isBlank()) {
-                        Toast.makeText(context, "Please enter a term before searching", Toast.LENGTH_SHORT).show()
-                    } else {
-                        openWebSearch(context, flashcard.term)
-                    }
-                }
-            ) {
-                Icon(Icons.Default.Search, contentDescription = "Search Term")
-            }
-            IconButton(onClick = onRemove) {
-                Icon(Icons.Default.Close, contentDescription = "Remove Flashcard")
-            }
-        }
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(8.dp)
-        ) {
-            OutlinedTextField(
-                value = flashcard.term,
-                onValueChange = onTermChange,
-                label = { Text("Term") },
-                modifier = Modifier.fillMaxWidth(),
-                textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                isError = showError && flashcard.term.isBlank()
-            )
-            OutlinedTextField(
-                value = flashcard.definition,
-                onValueChange = onDefinitionChange,
-                label = { Text("Definition") },
-                modifier = Modifier.fillMaxWidth(),
-                textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                isError = showError && flashcard.definition.isBlank()
-            )
-        }
-    }
-}
-
-fun openWebSearch(context: android.content.Context, query: String) {
-    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=$query"))
-    context.startActivity(intent)
-}
