@@ -40,7 +40,7 @@ fun PlayFlashcardSetScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("View Flashcard Sets") },
+                title = { Text("Play Flashcard Sets") },
                 navigationIcon = {
                     IconButton(onClick = {
                         navController.navigate("main_screen")
@@ -57,7 +57,6 @@ fun PlayFlashcardSetScreen(
                 .padding(16.dp)
                 .fillMaxSize()
         ) {
-            // Multiple Choice Flashcard Sets Section
             item {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -98,7 +97,6 @@ fun PlayFlashcardSetScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // Traditional Flashcard Sets Section
             item {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

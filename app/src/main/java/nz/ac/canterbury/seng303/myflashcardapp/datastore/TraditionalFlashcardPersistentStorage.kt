@@ -79,16 +79,14 @@ class TraditionalFlashcardPersistentStorage<T>(
         val cachedDataClone = getAll().first().toMutableList()
         val setIndex = cachedDataClone.indexOfFirst { it.getIdentifier() == setId }
         if (setIndex != -1) {
-            val set = cachedDataClone[setIndex] as TraditionalFlashcardSet // assuming the type
+            val set = cachedDataClone[setIndex] as TraditionalFlashcardSet
             val updatedFlashcards = set.flashcards.toMutableList().apply {
                 removeAt(flashcardIndex)
             }
 
             if (updatedFlashcards.isEmpty()) {
-                // If no flashcards are left, delete the entire set
                 cachedDataClone.removeAt(setIndex)
             } else {
-                // Otherwise, update the set with the remaining flashcards
                 val updatedSet = set.copy(flashcards = updatedFlashcards)
                 cachedDataClone[setIndex] = updatedSet as T
             }
@@ -112,7 +110,7 @@ class TraditionalFlashcardPersistentStorage<T>(
 
     fun clear(): Flow<Unit> = flow {
         dataStore.edit { preferences ->
-            preferences.clear() // This clears all data in the DataStore
+            preferences.clear()
         }
         emit(Unit)
     }

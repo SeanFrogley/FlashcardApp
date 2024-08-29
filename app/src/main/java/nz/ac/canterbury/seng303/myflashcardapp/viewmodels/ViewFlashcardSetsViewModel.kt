@@ -54,7 +54,7 @@ class ViewFlashcardSetsViewModel(
         multipleChoiceFlashcardStorage.delete(setId)
             .catch { /* Handle error */ }
             .collect {
-                loadMultipleChoiceFlashcardSets() // Reload sets after deletion
+                loadMultipleChoiceFlashcardSets()
             }
     }
 }

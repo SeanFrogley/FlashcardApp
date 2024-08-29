@@ -60,8 +60,7 @@ class CreateTraditionalFlashcardViewModel(
     }
 
     private fun getDefaultFlashcardSets(): List<TraditionalFlashcardSet> {
-        // Implement this method to return a list of default flashcard sets
-        return emptyList() // Placeholder
+        return emptyList()
     }
 }
 

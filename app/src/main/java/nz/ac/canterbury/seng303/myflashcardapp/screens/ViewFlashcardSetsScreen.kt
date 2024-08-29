@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -26,6 +28,8 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,12 +43,33 @@ fun ViewFlashcardSetsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("View Flashcard Sets") },
+                modifier = Modifier.height(80.dp),
+                title = {
+                    Text(
+                        text = "View Sets",
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = {
                         navController.navigate("main_screen")
                     }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = { /* do nothing this button is just to center the text */ },
+                        enabled = false,
+                        modifier = Modifier.alpha(0.3f)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "Check",
+                            tint = Color.Transparent
+                        )
                     }
                 }
             )
@@ -172,7 +197,7 @@ fun FlashcardSetItem(
         }
         // Delete Button
         IconButton(onClick = { showDialog = true }) {
-            Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Set")
+            Icon(imageVector = Icons.Default.Delete, tint = Color.Red, contentDescription = "Delete Set")
         }
         // View Button
         IconButton(onClick = onViewClick) {

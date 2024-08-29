@@ -28,9 +28,8 @@ class PlayTraditionalFlashcardViewModel(
     }
     fun updateFlashcard(setId: Int, index: Int, updatedFlashcard: TraditionalFlashcard) = viewModelScope.launch {
         val currentSet = _flashcardSet.value ?: return@launch
-        if (index !in currentSet.flashcards.indices) return@launch // Safety check for valid index
+        if (index !in currentSet.flashcards.indices) return@launch
 
-        // Replace the flashcard at the specific index with the updated flashcard
         val updatedFlashcards = currentSet.flashcards.toMutableList().apply {
             this[index] = updatedFlashcard
         }

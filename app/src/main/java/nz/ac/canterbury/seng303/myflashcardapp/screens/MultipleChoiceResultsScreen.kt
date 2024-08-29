@@ -48,7 +48,6 @@ fun MultipleChoiceResultsScreen(
         viewModel.loadFlashcardSet(setId)
     }
 
-    // Collect the flashcard set from the ViewModel
     val flashcardSet by viewModel.flashcardSet.collectAsState()
 
     Scaffold(

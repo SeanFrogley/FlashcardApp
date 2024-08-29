@@ -51,10 +51,8 @@ fun PlayTraditionalFlashcardScreen(
     setId: Int,
     viewModel: PlayTraditionalFlashcardViewModel = koinViewModel()
 ) {
-    // Load the flashcard set data
     viewModel.loadFlashcardSet(setId)
 
-    // Collect the flashcard set from the ViewModel
     val flashcardSet by viewModel.flashcardSet.collectAsState()
 
     var showAnswer by remember { mutableStateOf(false) }
@@ -77,7 +75,6 @@ fun PlayTraditionalFlashcardScreen(
 
     fun markFlashcardAsCorrect(isCorrect: Boolean) {
         flashcardSet?.flashcards?.getOrNull(currentIndex)?.let { flashcard ->
-            // Update the gotCorrect attribute
             val updatedFlashcard = flashcard.copy(gotCorrect = isCorrect)
             viewModel.updateFlashcard(setId, currentIndex, updatedFlashcard) // Updated to use index
         }

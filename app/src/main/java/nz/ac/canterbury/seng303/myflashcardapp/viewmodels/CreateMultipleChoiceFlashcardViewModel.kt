@@ -43,7 +43,6 @@ class CreateMultipleChoiceFlashcardViewModel(
         multipleChoiceFlashcardStorage.delete(setId)
             .catch { /* Handle the error appropriately */ }
             .collectLatest {
-                // Triggering a refresh after deleting
                 getFlashcardSets()
             }
     }
@@ -60,7 +59,6 @@ class CreateMultipleChoiceFlashcardViewModel(
         multipleChoiceFlashcardStorage.edit(setId, updatedSet)
             .catch { /* Handle the error appropriately */ }
             .collectLatest {
-                // Triggering a refresh after updating
                 getFlashcardSets()
             }
     }

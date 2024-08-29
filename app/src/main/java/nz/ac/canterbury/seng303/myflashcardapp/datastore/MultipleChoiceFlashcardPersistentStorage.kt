@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng303.myflashcardapp.datastore
 
-import android.util.Log
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -9,10 +8,8 @@ import kotlinx.coroutines.flow.map
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import nz.ac.canterbury.seng303.myflashcardapp.datastore.TraditionalFlashcardPersistentStorage.Companion
 import nz.ac.canterbury.seng303.myflashcardapp.models.Identifiable
 import nz.ac.canterbury.seng303.myflashcardapp.models.MultipleChoiceFlashcardSet
-import nz.ac.canterbury.seng303.myflashcardapp.models.TraditionalFlashcardSet
 import java.lang.reflect.Type
 
 
@@ -28,9 +25,6 @@ class MultipleChoiceFlashcardPersistentStorage<T>(
         cachedDataClone.add(data)
         dataStore.edit { preferences ->
             val jsonString = gson.toJson(cachedDataClone, type)
-
-            // Log the JSON representation of the data being inserted
-            Log.d("DataStoreInsert", "Inserting set: $jsonString")
 
             preferences[preferenceKey] = jsonString
             emit(OPERATION_SUCCESS)
@@ -86,16 +80,14 @@ class MultipleChoiceFlashcardPersistentStorage<T>(
         val cachedDataClone = getAll().first().toMutableList()
         val setIndex = cachedDataClone.indexOfFirst { it.getIdentifier() == setId }
         if (setIndex != -1) {
-            val set = cachedDataClone[setIndex] as MultipleChoiceFlashcardSet // assuming the type
+            val set = cachedDataClone[setIndex] as MultipleChoiceFlashcardSet
             val updatedFlashcards = set.flashcards.toMutableList().apply {
                 removeAt(flashcardIndex)
             }
 
             if (updatedFlashcards.isEmpty()) {
-                // If no flashcards are left, delete the entire set
                 cachedDataClone.removeAt(setIndex)
             } else {
-                // Otherwise, update the set with the remaining flashcards
                 val updatedSet = set.copy(flashcards = updatedFlashcards)
                 cachedDataClone[setIndex] = updatedSet as T
             }
@@ -118,7 +110,7 @@ class MultipleChoiceFlashcardPersistentStorage<T>(
 
     fun clear(): Flow<Unit> = flow {
         dataStore.edit { preferences ->
-            preferences.clear() // This clears all data in the DataStore
+            preferences.clear()
         }
         emit(Unit)
     }
